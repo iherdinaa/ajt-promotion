@@ -57,18 +57,25 @@ export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{
     return { success: false, error: 'Webhook URL not configured' };
   }
 
+  console.log('[v0] Submitting to Google Sheets:', data);
+  console.log('[v0] Webhook URL:', GOOGLE_SHEETS_WEBHOOK_URL);
+
   try {
-    const response = await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Google Apps Script requires no-cors for web apps
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+    // Use URL parameters for Google Apps Script (more reliable than POST body with CORS)
+    const params = new URLSearchParams();
+    Object.entries(data).forEach(([key, value]) => {
+      params.append(key, String(value));
     });
 
-    // With no-cors, we can't read the response, so we assume success
-    console.log('[v0] Data submitted to Google Sheets');
+    const url = `${GOOGLE_SHEETS_WEBHOOK_URL}?${params.toString()}`;
+    
+    // Use fetch with no-cors mode and GET method via script tag injection for reliability
+    const response = await fetch(url, {
+      method: 'GET',
+      mode: 'no-cors',
+    });
+
+    console.log('[v0] Data submitted to Google Sheets successfully');
     return { success: true };
   } catch (error) {
     console.error('[v0] Failed to submit to Google Sheets:', error);

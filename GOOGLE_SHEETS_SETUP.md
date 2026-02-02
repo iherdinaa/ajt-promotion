@@ -20,17 +20,111 @@ Your Google Sheet should have the following columns in the first row (headers):
 
 ```javascript
 // Google Apps Script - Web App for receiving form submissions
+// Handles GET requests with URL parameters (works better with CORS)
 
-function doPost(e) {
+var SHEET_NAME = 'Sheet1'; // Change this if your sheet has a different name
+
+// Headers for the spreadsheet
+var HEADERS = [
+  'timestamp',
+  'entry_point', 
+  'company_name',
+  'email',
+  'phone_number',
+  'survey_q1_resignation',
+  'survey_q2_hiring',
+  'survey_q3_headcount',
+  'gift',
+  'referral_name',
+  'referral_company',
+  'referral_email',
+  'referral_phone',
+  'referral_job_position',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign'
+];
+
+// Ensure headers exist in the sheet
+function ensureHeaders(sheet) {
+  var firstRow = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+  var hasHeaders = firstRow[0] !== '';
+  
+  if (!hasHeaders) {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    // Make headers bold
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  }
+}
+
+// Handle GET requests with URL parameters
+function doGet(e) {
   try {
-    // Parse the incoming JSON data
-    const data = JSON.parse(e.postData.contents);
+    var params = e.parameter;
     
-    // Open the spreadsheet - use your spreadsheet ID
-    const ss = SpreadsheetApp.openById('1kppk_NJn7U3xdj1yYGPPsGiHS1LXCVTv7HldkyJbHlo');
-    const sheet = ss.getSheetByName('Sheet1'); // Change to your sheet name if different
+    // If no data params, just return status
+    if (!params.timestamp && !params.email) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'OK', message: 'AJT Promotion Webhook is running' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(SHEET_NAME);
+    
+    if (!sheet) {
+      sheet = ss.getSheets()[0]; // Fallback to first sheet
+    }
+    
+    // Ensure headers exist
+    ensureHeaders(sheet);
     
     // Append the data as a new row
+    sheet.appendRow([
+      params.timestamp || new Date().toISOString(),
+      params.entryPoint || '',
+      params.companyName || '',
+      params.email || '',
+      params.phoneNumber || '',
+      params.surveyQ1_resignationFrequency || '',
+      params.surveyQ2_hiringPlan || '',
+      params.surveyQ3_headcount || '',
+      params.gift || '',
+      params.referralName || '',
+      params.referralCompany || '',
+      params.referralEmail || '',
+      params.referralPhone || '',
+      params.referralJobPosition || '',
+      params.utmSource || '',
+      params.utmMedium || '',
+      params.utmCampaign || ''
+    ]);
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// Also handle POST requests (backup method)
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(SHEET_NAME);
+    
+    if (!sheet) {
+      sheet = ss.getSheets()[0];
+    }
+    
+    ensureHeaders(sheet);
+    
     sheet.appendRow([
       data.timestamp || new Date().toISOString(),
       data.entryPoint || '',
@@ -51,24 +145,15 @@ function doPost(e) {
       data.utmCampaign || ''
     ]);
     
-    // Return success response
     return ContentService
       .createTextOutput(JSON.stringify({ success: true }))
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
-    // Return error response
     return ContentService
       .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-// Handle GET requests (for testing)
-function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: 'OK', message: 'AJT Promotion Webhook is running' }))
-    .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
@@ -88,6 +173,8 @@ function doGet(e) {
 9. **Authorize** the app when prompted (click through the warnings for unverified apps)
 
 10. Copy the **Web app URL** that appears (it looks like: `https://script.google.com/macros/s/AKfycb.../exec`)
+
+**IMPORTANT**: If you already have a deployment, you must create a **NEW deployment** after updating the code. Go to **Deploy > New deployment** (not "Manage deployments") to get a new URL.
 
 ## Step 3: Add Environment Variable
 
