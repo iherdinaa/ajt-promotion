@@ -9,10 +9,11 @@ interface PrizeRevealProps {
   onReferralSubmit: (referral: ReferralData) => Promise<void>;
   onMoreHuatClick: () => Promise<void>;
   onShareClick: (platform: 'linkedin' | 'whatsapp') => Promise<void>;
+  onTngoClick: () => Promise<void>;
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
@@ -136,7 +137,10 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                 {/* TnG Reload - Date Restricted */}
                 {showTnG && (
                     <div 
-                        onClick={() => setIsTnGModalOpen(true)}
+                        onClick={async () => {
+                          await onTngoClick();
+                          setIsTnGModalOpen(true);
+                        }}
                         className="cursor-pointer bg-blue-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-blue-200 shadow-lg flex flex-col items-center justify-center relative overflow-hidden transition-all active:scale-95 hover:bg-blue-100 group"
                     >
                         <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>

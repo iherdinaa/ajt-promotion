@@ -9,6 +9,14 @@ import PrizeReveal from './components/PrizeReveal';
 import Layout from './components/Layout';
 import { submitToGoogleSheets, getUtmParams, formatPhoneNumber, SheetSubmissionData } from './lib/googleSheets';
 
+// Track user interactions
+interface UserInteractions {
+  clickShareLinkedin: boolean;
+  clickShareWhatsapp: boolean;
+  clickTngo: boolean;
+  clickMoreHuat: boolean;
+}
+
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>('ENTRY');
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -16,6 +24,13 @@ const App: React.FC = () => {
   const [spinCount, setSpinCount] = useState(0);
   const [prizeWon, setPrizeWon] = useState<string>('');
   const [utmParams] = useState(() => getUtmParams());
+  const [interactions, setInteractions] = useState<UserInteractions>({
+    clickShareLinkedin: false,
+    clickShareWhatsapp: false,
+    clickTngo: false,
+    clickMoreHuat: false,
+  });
+  const [submissionTimestamp] = useState(() => new Date().toISOString());
 
   // Daily play restriction check
   useEffect(() => {
@@ -26,33 +41,42 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // 1. Track "Open Angpau" - when user submits entry form
-  const handleStartSpin = async (data: UserData) => {
-    setUserData(data);
-    
-    // Submit "open_angpau" event
+  // Submit data to Google Sheets
+  const submitData = async (
+    user: UserData,
+    quiz: QuizData | null,
+    currentInteractions: UserInteractions,
+    referral?: ReferralData
+  ) => {
     const submissionData: SheetSubmissionData = {
-      timestamp: new Date().toISOString(),
-      action: 'open_angpau',
-      entry_point: window.location.pathname || '/',
-      company_name: data.companyName,
-      email: data.email,
-      phone_number: formatPhoneNumber(data.countryCode, data.phone),
-      survey_q1: '',
-      survey_q2: '',
-      survey_q3: '',
-      gift: '',
-      referral_name: '',
-      referral_company: '',
-      referral_email: '',
-      referral_phone: '',
-      referral_position: '',
+      timestamp: submissionTimestamp,
+      company_name: user.companyName,
+      email: user.email,
+      phone_number: formatPhoneNumber(user.countryCode, user.phone),
+      survey_q1: quiz?.resignationFrequency || '',
+      survey_q2: quiz?.hiringPlan || '',
+      survey_q3: quiz?.headcount || '',
+      click_share_linkedin: currentInteractions.clickShareLinkedin ? 'yes' : 'no',
+      click_share_whatsapp: currentInteractions.clickShareWhatsapp ? 'yes' : 'no',
+      click_tngo: currentInteractions.clickTngo ? 'yes' : 'no',
+      click_more_huat: currentInteractions.clickMoreHuat ? 'yes' : 'no',
+      referral_name: referral?.name || '',
+      referral_phone: referral?.phone || '',
+      referral_position: referral?.position || '',
+      referral_email: referral?.email || '',
+      referral_companyname: referral?.companyName || '',
+      utm_campaign: utmParams.utmCampaign,
       utm_source: utmParams.utmSource,
       utm_medium: utmParams.utmMedium,
-      utm_campaign: utmParams.utmCampaign,
     };
     await submitToGoogleSheets(submissionData);
-    
+  };
+
+  // 1. When user submits entry form (Open Angpau)
+  const handleStartSpin = async (data: UserData) => {
+    setUserData(data);
+    // Submit initial entry
+    await submitData(data, null, interactions);
     setGameState('GAME');
   };
 
@@ -61,7 +85,7 @@ const App: React.FC = () => {
     setGameState('PRE_CLAIM');
   };
 
-  // 2. Track "Submit Survey" - when user completes survey
+  // 2. When user completes survey
   const handleQuizSubmit = async (data: QuizData) => {
     setQuizData(data);
     localStorage.setItem('cny_spin_last_played', new Date().toDateString());
@@ -71,33 +95,13 @@ const App: React.FC = () => {
     const gift = determineGift(data.headcount);
     setPrizeWon(gift);
     
-    // Submit "submit_survey" event
-    const submissionData: SheetSubmissionData = {
-      timestamp: new Date().toISOString(),
-      action: 'submit_survey',
-      entry_point: window.location.pathname || '/',
-      company_name: userData.companyName,
-      email: userData.email,
-      phone_number: formatPhoneNumber(userData.countryCode, userData.phone),
-      survey_q1: data.resignationFrequency,
-      survey_q2: data.hiringPlan,
-      survey_q3: data.headcount,
-      gift: gift,
-      referral_name: '',
-      referral_company: '',
-      referral_email: '',
-      referral_phone: '',
-      referral_position: '',
-      utm_source: utmParams.utmSource,
-      utm_medium: utmParams.utmMedium,
-      utm_campaign: utmParams.utmCampaign,
-    };
-    await submitToGoogleSheets(submissionData);
+    // Submit with survey data
+    await submitData(userData, data, interactions);
     
     setGameState('REVEAL');
   };
 
-  // Determine gift based on headcount (same logic as PrizeReveal)
+  // Determine gift based on headcount
   const determineGift = (headcount: string): string => {
     if (headcount === "1 - 5 people") return "Tier 1 Voucher";
     if (headcount === "6 - 10 people") return "Tier 2 Voucher + Billboard Chance";
@@ -107,86 +111,44 @@ const App: React.FC = () => {
     return "Tier 1 Voucher";
   };
 
-  // 3. Track "Click More Huat" - when user clicks the button to see referral form
+  // 3. Track "Click More Huat"
   const handleMoreHuatClick = async () => {
-    if (!userData || !quizData) return;
+    const newInteractions = { ...interactions, clickMoreHuat: true };
+    setInteractions(newInteractions);
     
-    const submissionData: SheetSubmissionData = {
-      timestamp: new Date().toISOString(),
-      action: 'click_more_huat',
-      entry_point: window.location.pathname || '/',
-      company_name: userData.companyName,
-      email: userData.email,
-      phone_number: formatPhoneNumber(userData.countryCode, userData.phone),
-      survey_q1: quizData.resignationFrequency,
-      survey_q2: quizData.hiringPlan,
-      survey_q3: quizData.headcount,
-      gift: prizeWon,
-      referral_name: '',
-      referral_company: '',
-      referral_email: '',
-      referral_phone: '',
-      referral_position: '',
-      utm_source: utmParams.utmSource,
-      utm_medium: utmParams.utmMedium,
-      utm_campaign: utmParams.utmCampaign,
-    };
-    await submitToGoogleSheets(submissionData);
+    if (userData && quizData) {
+      await submitData(userData, quizData, newInteractions);
+    }
   };
 
   // 4 & 5. Track share clicks (LinkedIn & WhatsApp)
   const handleShareClick = async (platform: 'linkedin' | 'whatsapp') => {
-    if (!userData || !quizData) return;
-    
-    const submissionData: SheetSubmissionData = {
-      timestamp: new Date().toISOString(),
-      action: platform === 'linkedin' ? 'share_linkedin' : 'share_whatsapp',
-      entry_point: window.location.pathname || '/',
-      company_name: userData.companyName,
-      email: userData.email,
-      phone_number: formatPhoneNumber(userData.countryCode, userData.phone),
-      survey_q1: quizData.resignationFrequency,
-      survey_q2: quizData.hiringPlan,
-      survey_q3: quizData.headcount,
-      gift: prizeWon,
-      referral_name: '',
-      referral_company: '',
-      referral_email: '',
-      referral_phone: '',
-      referral_position: '',
-      utm_source: utmParams.utmSource,
-      utm_medium: utmParams.utmMedium,
-      utm_campaign: utmParams.utmCampaign,
+    const newInteractions = { 
+      ...interactions, 
+      clickShareLinkedin: platform === 'linkedin' ? true : interactions.clickShareLinkedin,
+      clickShareWhatsapp: platform === 'whatsapp' ? true : interactions.clickShareWhatsapp,
     };
-    await submitToGoogleSheets(submissionData);
+    setInteractions(newInteractions);
+    
+    if (userData && quizData) {
+      await submitData(userData, quizData, newInteractions);
+    }
   };
 
-  // 6. Track "Submit Referral" - when user submits referral form
+  // Track TnGo click
+  const handleTngoClick = async () => {
+    const newInteractions = { ...interactions, clickTngo: true };
+    setInteractions(newInteractions);
+    
+    if (userData && quizData) {
+      await submitData(userData, quizData, newInteractions);
+    }
+  };
+
+  // 6. Submit Referral
   const handleReferralSubmit = async (referral: ReferralData) => {
     if (!userData || !quizData) return;
-    
-    const submissionData: SheetSubmissionData = {
-      timestamp: new Date().toISOString(),
-      action: 'submit_referral',
-      entry_point: window.location.pathname || '/',
-      company_name: userData.companyName,
-      email: userData.email,
-      phone_number: formatPhoneNumber(userData.countryCode, userData.phone),
-      survey_q1: quizData.resignationFrequency,
-      survey_q2: quizData.hiringPlan,
-      survey_q3: quizData.headcount,
-      gift: prizeWon + ' + Referral Bonus (Free Internship Ad)',
-      referral_name: referral.name,
-      referral_company: referral.companyName,
-      referral_email: referral.email,
-      referral_phone: referral.phone,
-      referral_position: referral.position,
-      utm_source: utmParams.utmSource,
-      utm_medium: utmParams.utmMedium,
-      utm_campaign: utmParams.utmCampaign,
-    };
-    
-    await submitToGoogleSheets(submissionData);
+    await submitData(userData, quizData, interactions, referral);
   };
 
   return (
@@ -209,11 +171,18 @@ const App: React.FC = () => {
           onReferralSubmit={handleReferralSubmit}
           onMoreHuatClick={handleMoreHuatClick}
           onShareClick={handleShareClick}
+          onTngoClick={handleTngoClick}
           onReset={() => {
             setGameState('ENTRY');
             setSpinCount(0);
             setQuizData(null);
             setPrizeWon('');
+            setInteractions({
+              clickShareLinkedin: false,
+              clickShareWhatsapp: false,
+              clickTngo: false,
+              clickMoreHuat: false,
+            });
           }}
         />
       )}

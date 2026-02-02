@@ -4,14 +4,8 @@
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || '';
 
 export interface SheetSubmissionData {
-  // Timestamp (auto-generated)
+  // Timestamp
   timestamp: string;
-  
-  // Action type
-  action: 'open_angpau' | 'submit_survey' | 'click_more_huat' | 'share_linkedin' | 'share_whatsapp' | 'submit_referral';
-  
-  // Entry Point (page where user entered)
-  entry_point: string;
   
   // User Data from EntryPage
   company_name: string;
@@ -23,20 +17,23 @@ export interface SheetSubmissionData {
   survey_q2: string;
   survey_q3: string;
   
-  // Gift/Prize won
-  gift: string;
+  // Click tracking (yes/no)
+  click_share_linkedin: string;
+  click_share_whatsapp: string;
+  click_tngo: string;
+  click_more_huat: string;
   
   // Referral Data
   referral_name: string;
-  referral_company: string;
-  referral_email: string;
   referral_phone: string;
   referral_position: string;
+  referral_email: string;
+  referral_companyname: string;
   
   // UTM Parameters
+  utm_campaign: string;
   utm_source: string;
   utm_medium: string;
-  utm_campaign: string;
 }
 
 // Get UTM parameters from URL
