@@ -71,7 +71,7 @@ async function getAccessToken(): Promise<string> {
 
 // Append row to Google Sheet
 async function appendToSheet(accessToken: string, rowData: string[]): Promise<void> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:Q:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:R:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -129,8 +129,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log('[v0] Got access token');
 
     // Prepare row data matching the headers
+    // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, referral_name, referral_company, referral_email, referral_phone, referral_position, utm_source, utm_medium, utm_campaign
     const rowData = [
       data.timestamp || new Date().toISOString(),
+      data.action || '',
       data.entry_point || '',
       data.company_name || '',
       data.email || '',

@@ -5,6 +5,9 @@ export interface SheetSubmissionData {
   // Timestamp (auto-generated)
   timestamp: string;
   
+  // Action type
+  action: 'open_angpau' | 'submit_survey' | 'click_more_huat' | 'share_linkedin' | 'share_whatsapp' | 'submit_referral';
+  
   // Entry Point (page where user entered)
   entry_point: string;
   

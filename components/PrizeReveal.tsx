@@ -7,10 +7,12 @@ interface PrizeRevealProps {
   spinCount: number;
   quizData: QuizData | null;
   onReferralSubmit: (referral: ReferralData) => Promise<void>;
+  onMoreHuatClick: () => Promise<void>;
+  onShareClick: (platform: 'linkedin' | 'whatsapp') => Promise<void>;
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
@@ -75,7 +77,10 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
     return { image: REWARD_IMAGES.tier1, hasBillboard: false };
   }, [quizData]);
 
-  const handleShare = (platform: 'whatsapp' | 'linkedin') => {
+  const handleShare = async (platform: 'whatsapp' | 'linkedin') => {
+    // Track share click
+    await onShareClick(platform);
+    
     const text = "I just won huge rewards in A Huat Thing from AJobThing. Come tap your ong and win angpau too!";
     const url = "https://ajobthing.promotion.com"; 
     
@@ -199,7 +204,10 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
             <div className="w-full max-w-xl mx-auto">
                <button 
-                onClick={() => setStep('REFERRAL')}
+                onClick={async () => {
+                  await onMoreHuatClick();
+                  setStep('REFERRAL');
+                }}
                 className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-sm sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_4px_20px_rgba(234,179,8,0.4)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[6px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group"
                >
                  <span>WANT MORE HUAT?</span>
