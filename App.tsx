@@ -1,4 +1,5 @@
 
+// AJT Promotion App
 import React, { useState, useEffect } from 'react';
 import { GameState, UserData, QuizData } from './types';
 import EntryPage from './components/EntryPage';
