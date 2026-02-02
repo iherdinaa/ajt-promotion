@@ -1,39 +1,39 @@
-// Google Sheets Integration
-// Uses Google Apps Script Web App as a proxy to write to Google Sheets
+// Google Sheets Integration via SheetDB
+// SheetDB provides a simple REST API to read/write to Google Sheets
 
-const GOOGLE_SHEETS_WEBHOOK_URL = import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL || '';
+const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/ibmtivhq32oyh';
 
 export interface SheetSubmissionData {
   // Timestamp (auto-generated)
   timestamp: string;
   
   // Entry Point (page where user entered)
-  entryPoint: string;
+  entry_point: string;
   
   // User Data from EntryPage
-  companyName: string;
+  company_name: string;
   email: string;
-  phoneNumber: string;
+  phone_number: string;
   
   // Survey Data from PreClaimModal (3 questions)
-  surveyQ1_resignationFrequency: string;
-  surveyQ2_hiringPlan: string;
-  surveyQ3_headcount: string;
+  survey_q1: string;
+  survey_q2: string;
+  survey_q3: string;
   
   // Gift/Prize won
   gift: string;
   
   // Referral Data
-  referralName: string;
-  referralCompany: string;
-  referralEmail: string;
-  referralPhone: string;
-  referralJobPosition: string;
+  referral_name: string;
+  referral_company: string;
+  referral_email: string;
+  referral_phone: string;
+  referral_position: string;
   
   // UTM Parameters
-  utmSource: string;
-  utmMedium: string;
-  utmCampaign: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
 }
 
 // Get UTM parameters from URL
@@ -50,49 +50,30 @@ export function getUtmParams(): { utmSource: string; utmMedium: string; utmCampa
   };
 }
 
-// Submit data to Google Sheets via Apps Script Web App
+// Submit data to Google Sheets via SheetDB API
 export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{ success: boolean; error?: string }> {
-  if (!GOOGLE_SHEETS_WEBHOOK_URL) {
-    console.error('[v0] Google Sheets webhook URL not configured');
-    return { success: false, error: 'Webhook URL not configured' };
-  }
-
-  console.log('[v0] Submitting to Google Sheets:', data);
-  console.log('[v0] Webhook URL:', GOOGLE_SHEETS_WEBHOOK_URL);
+  console.log('[v0] Submitting to SheetDB:', data);
 
   try {
-    // Build URL with parameters
-    const params = new URLSearchParams();
-    Object.entries(data).forEach(([key, value]) => {
-      params.append(key, String(value));
+    const response = await fetch(SHEETDB_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: [data] }),
     });
 
-    const url = `${GOOGLE_SHEETS_WEBHOOK_URL}?${params.toString()}`;
-    console.log('[v0] Full URL:', url);
-    
-    // Method 1: Use Image request (most reliable for cross-origin)
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        console.log('[v0] Image request completed successfully');
-        resolve({ success: true });
-      };
-      img.onerror = () => {
-        // Even on "error", the request was likely sent successfully
-        // Google Apps Script doesn't return a valid image
-        console.log('[v0] Image request completed (expected behavior)');
-        resolve({ success: true });
-      };
-      img.src = url;
-      
-      // Timeout fallback
-      setTimeout(() => {
-        console.log('[v0] Request timeout - assuming success');
-        resolve({ success: true });
-      }, 5000);
-    });
+    if (response.ok) {
+      const result = await response.json();
+      console.log('[v0] SheetDB response:', result);
+      return { success: true };
+    } else {
+      const errorText = await response.text();
+      console.error('[v0] SheetDB error:', errorText);
+      return { success: false, error: errorText };
+    }
   } catch (error) {
-    console.error('[v0] Failed to submit to Google Sheets:', error);
+    console.error('[v0] Failed to submit to SheetDB:', error);
     return { success: false, error: String(error) };
   }
 }
