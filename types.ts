@@ -6,6 +6,14 @@ export interface UserData {
   countryCode: string;
 }
 
+export interface ReferralData {
+  name: string;
+  position: string;
+  companyName: string;
+  phone: string;
+  email: string;
+}
+
 export interface QuizData {
   resignationFrequency: string;
   hiringPlan: string;
