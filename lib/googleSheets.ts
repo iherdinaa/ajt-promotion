@@ -1,7 +1,5 @@
-// Google Sheets Integration via SheetDB
-// SheetDB provides a simple REST API to read/write to Google Sheets
-
-const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/ibmtivhq32oyh';
+// Google Sheets Integration via Server API Route
+// Uses Google Sheets API with Service Account authentication
 
 export interface SheetSubmissionData {
   // Timestamp (auto-generated)
@@ -50,30 +48,30 @@ export function getUtmParams(): { utmSource: string; utmMedium: string; utmCampa
   };
 }
 
-// Submit data to Google Sheets via SheetDB API
+// Submit data to Google Sheets via server API route
 export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{ success: boolean; error?: string }> {
-  console.log('[v0] Submitting to SheetDB:', data);
+  console.log('[v0] Submitting to Google Sheets:', data);
 
   try {
-    const response = await fetch(SHEETDB_API_URL, {
+    const response = await fetch('/api/submit-to-sheets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: [data] }),
+      body: JSON.stringify(data),
     });
 
-    if (response.ok) {
-      const result = await response.json();
-      console.log('[v0] SheetDB response:', result);
+    const result = await response.json();
+    
+    if (response.ok && result.success) {
+      console.log('[v0] Google Sheets submission successful');
       return { success: true };
     } else {
-      const errorText = await response.text();
-      console.error('[v0] SheetDB error:', errorText);
-      return { success: false, error: errorText };
+      console.error('[v0] Google Sheets error:', result.error);
+      return { success: false, error: result.error };
     }
   } catch (error) {
-    console.error('[v0] Failed to submit to SheetDB:', error);
+    console.error('[v0] Failed to submit to Google Sheets:', error);
     return { success: false, error: String(error) };
   }
 }
