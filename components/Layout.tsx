@@ -43,7 +43,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isCompact = false }) => {
   };
 
   return (
-    <div className="relative w-full h-screen festive-bg text-white overflow-hidden select-none flex flex-col">
+    <div className="relative w-full min-h-screen h-[100dvh] festive-bg text-white overflow-hidden select-none flex flex-col">
       {/* Background Audio */}
       <audio 
         ref={audioRef} 
@@ -58,7 +58,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isCompact = false }) => {
             key={coin.id}
             src={coin.img}
             alt=""
-            className="absolute w-8 h-8 md:w-12 md:h-12 object-contain opacity-80 animate-fall-continuous drop-shadow-md"
+            className="absolute w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 object-contain opacity-80 animate-fall-continuous drop-shadow-md"
             style={{
               left: `${coin.left}%`,
               top: '-50px',
@@ -80,25 +80,25 @@ const Layout: React.FC<LayoutProps> = ({ children, isCompact = false }) => {
       {/* Main Content */}
       <div className="relative z-10 w-full h-full flex flex-col">
         {/* Header Section */}
-        <header className={`shrink-0 flex items-center justify-between px-6 md:px-8 transition-all duration-500 ${isCompact ? 'pt-2 pb-2' : 'pt-4 pb-4'}`}>
+        <header className={`shrink-0 flex items-center justify-between px-3 sm:px-6 md:px-8 transition-all duration-500 ${isCompact ? 'pt-1 pb-1 sm:pt-2 sm:pb-2' : 'pt-2 pb-2 sm:pt-4 sm:pb-4'}`}>
           <div className="opacity-90 hover:opacity-100 transition-opacity">
             {/* Logo Bigger */}
             <img 
               src={IMAGES.logo} 
               alt="Ajobthing Logo" 
-              className="h-12 md:h-20 w-auto drop-shadow-md"
+              className="h-8 sm:h-12 md:h-16 lg:h-20 w-auto drop-shadow-md"
             />
           </div>
           
           {/* Music Toggle Button */}
           <button 
             onClick={toggleMusic}
-            className="bg-red-900/50 hover:bg-red-900/80 p-3 rounded-full border border-yellow-500/50 backdrop-blur-sm transition-all transform hover:scale-105"
+            className="bg-red-900/50 hover:bg-red-900/80 p-2 sm:p-3 rounded-full border border-yellow-500/50 backdrop-blur-sm transition-all transform hover:scale-105"
           >
             {isPlaying ? (
-              <i className="fa-solid fa-volume-high text-yellow-400 text-lg md:text-xl animate-pulse"></i>
+              <i className="fa-solid fa-volume-high text-yellow-400 text-base sm:text-lg md:text-xl animate-pulse"></i>
             ) : (
-              <i className="fa-solid fa-volume-xmark text-gray-300 text-lg md:text-xl"></i>
+              <i className="fa-solid fa-volume-xmark text-gray-300 text-base sm:text-lg md:text-xl"></i>
             )}
           </button>
         </header>
