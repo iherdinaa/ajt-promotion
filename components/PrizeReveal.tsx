@@ -1,15 +1,16 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { QuizData } from '../types';
+import React, { useState, useMemo } from 'react';
+import { QuizData, ReferralData } from '../types';
 import { REWARD_IMAGES } from '../constants';
 
 interface PrizeRevealProps {
   spinCount: number;
   quizData: QuizData | null;
+  onReferralSubmit: (referral: ReferralData) => Promise<void>;
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
@@ -32,12 +33,14 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReset }) => {
   const showLunch = lunchRange1 || lunchDay2;
 
   // Referral Form State
-  const [referralData, setReferralData] = useState({
+  const [referralData, setReferralData] = useState<ReferralData>({
     name: '',
     position: 'HR/Recruiter',
     companyName: '',
     phone: '',
+    email: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const jobPositions = [
     "Owner / Founder",
@@ -83,9 +86,17 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReset }) => {
     }
   };
 
-  const handleReferralSubmit = (e: React.FormEvent) => {
+  const handleReferralSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep('REFERRAL_SUCCESS');
+    setIsSubmitting(true);
+    try {
+      await onReferralSubmit(referralData);
+      setStep('REFERRAL_SUCCESS');
+    } catch (error) {
+      console.error('[v0] Referral submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -298,14 +309,33 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReset }) => {
                                 />
                             </div>
                         </div>
+
+                        {/* Email Field */}
+                        <div className="relative group md:col-span-2">
+                            <label className="block text-xs font-black text-gray-500 uppercase mb-2 ml-1">Email Address</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i className="fa-solid fa-envelope text-gray-300 group-focus-within:text-red-500 transition-colors"></i>
+                                </div>
+                                <input 
+                                    required 
+                                    type="email" 
+                                    placeholder="friend@company.com"
+                                    className="w-full bg-white border-2 border-gray-200 rounded-xl py-3 pl-11 pr-4 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all placeholder-gray-300" 
+                                    value={referralData.email}
+                                    onChange={e => setReferralData({...referralData, email: e.target.value})}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="pt-4 space-y-3">
                         <button 
                             type="submit"
-                            className="w-full bg-red-600 text-white font-black text-xl py-4 rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-widest transform active:scale-[0.99]"
+                            disabled={isSubmitting}
+                            className="w-full bg-red-600 text-white font-black text-xl py-4 rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-widest transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Submit Referral <i className="fa-solid fa-paper-plane ml-2"></i>
+                            {isSubmitting ? 'Submitting...' : 'Submit Referral'} <i className={`fa-solid ${isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'} ml-2`}></i>
                         </button>
                         
                         <button 
