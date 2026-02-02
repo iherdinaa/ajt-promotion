@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const SPREADSHEET_ID = '1kppk_NJn7U3xdj1yYGPPsGiHS1LXCVTv7HldkyJbHlo';
 const SHEET_NAME = 'Ahuathing';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
-// Get access token using service account
+// Create JWT and get access token
 async function getAccessToken(): Promise<string> {
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
   if (!clientEmail || !privateKey) {
-    throw new Error('Missing Google service account credentials');
+    throw new Error('Missing Google credentials');
   }
 
   // Create JWT header and claim
@@ -29,48 +29,31 @@ async function getAccessToken(): Promise<string> {
   };
 
   // Base64url encode
-  const base64url = (obj: object) => {
-    const json = JSON.stringify(obj);
-    const base64 = btoa(json);
+  const base64urlEncode = (obj: object) => {
+    const str = JSON.stringify(obj);
+    const base64 = Buffer.from(str).toString('base64');
     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   };
 
-  const encodedHeader = base64url(header);
-  const encodedClaim = base64url(claim);
-  const signatureInput = `${encodedHeader}.${encodedClaim}`;
+  const headerEncoded = base64urlEncode(header);
+  const claimEncoded = base64urlEncode(claim);
+  const signatureInput = `${headerEncoded}.${claimEncoded}`;
 
-  // Sign with private key using Web Crypto API
-  const encoder = new TextEncoder();
-  const data = encoder.encode(signatureInput);
+  // Sign with private key
+  const crypto = await import('crypto');
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.update(signatureInput);
+  const signature = sign.sign(privateKey, 'base64');
+  const signatureEncoded = signature.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Import the private key
-  const pemContents = privateKey
-    .replace('-----BEGIN PRIVATE KEY-----', '')
-    .replace('-----END PRIVATE KEY-----', '')
-    .replace(/\s/g, '');
-  
-  const binaryKey = Uint8Array.from(atob(pemContents), c => c.charCodeAt(0));
-  
-  const cryptoKey = await crypto.subtle.importKey(
-    'pkcs8',
-    binaryKey,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-
-  const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', cryptoKey, data);
-  const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
-
-  const jwt = `${signatureInput}.${encodedSignature}`;
+  const jwt = `${signatureInput}.${signatureEncoded}`;
 
   // Exchange JWT for access token
   const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
     body: new URLSearchParams({
       grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
       assertion: jwt,
@@ -78,8 +61,8 @@ async function getAccessToken(): Promise<string> {
   });
 
   if (!tokenResponse.ok) {
-    const error = await tokenResponse.text();
-    throw new Error(`Failed to get access token: ${error}`);
+    const errorText = await tokenResponse.text();
+    throw new Error(`Failed to get access token: ${errorText}`);
   }
 
   const tokenData = await tokenResponse.json();
@@ -87,7 +70,7 @@ async function getAccessToken(): Promise<string> {
 }
 
 // Append row to Google Sheet
-async function appendToSheet(accessToken: string, values: string[]): Promise<void> {
+async function appendToSheet(accessToken: string, rowData: string[]): Promise<void> {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:Q:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const response = await fetch(url, {
@@ -97,21 +80,34 @@ async function appendToSheet(accessToken: string, values: string[]): Promise<voi
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      values: [values],
+      values: [rowData],
     }),
   });
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Failed to append to sheet: ${error}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to append to sheet: ${errorText}`);
   }
 }
 
-export async function POST(request: NextRequest) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Handle CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
+  }
+
   console.log('[v0] API route called');
-  
+
   try {
-    const data = await request.json();
+    const data = req.body;
     console.log('[v0] Received data:', JSON.stringify(data));
 
     // Check environment variables
@@ -121,10 +117,10 @@ export async function POST(request: NextRequest) {
     console.log('[v0] Has private key:', hasKey);
 
     if (!hasEmail || !hasKey) {
-      return NextResponse.json(
-        { success: false, error: 'Missing Google credentials. Please set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY environment variables.' },
-        { status: 500 }
-      );
+      return res.status(500).json({
+        success: false,
+        error: 'Missing Google credentials. Please set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY environment variables.',
+      });
     }
 
     // Get access token
@@ -152,19 +148,19 @@ export async function POST(request: NextRequest) {
       data.utm_medium || '',
       data.utm_campaign || '',
     ];
-    console.log('[v0] Row data prepared:', rowData);
+    console.log('[v0] Row data prepared');
 
     // Append to sheet
     console.log('[v0] Appending to sheet...');
     await appendToSheet(accessToken, rowData);
     console.log('[v0] Successfully appended to sheet');
 
-    return NextResponse.json({ success: true });
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error('[v0] Error submitting to Google Sheets:', error);
-    return NextResponse.json(
-      { success: false, error: String(error) },
-      { status: 500 }
-    );
+    return res.status(500).json({
+      success: false,
+      error: String(error),
+    });
   }
 }
