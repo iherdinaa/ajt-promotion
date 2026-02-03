@@ -109,21 +109,21 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 text-center overflow-y-auto">
-      {/* Responsive container - optimized for 13" laptops */}
-      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1rem] sm:rounded-[1.25rem] md:rounded-[1.5rem] p-3 sm:p-4 md:p-5 lg:p-6 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[3px] sm:border-[4px] md:border-[5px] lg:border-[6px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-2 sm:my-3 max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-1.5rem)] overflow-y-auto">
+    <div className="w-full h-full flex flex-col items-center justify-center p-1.5 sm:p-2 md:p-3 text-center overflow-hidden">
+      {/* Responsive container - optimized for 13" laptops to fit without scroll */}
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1rem] sm:rounded-[1.25rem] p-2.5 sm:p-3 md:p-4 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[3px] sm:border-[4px] md:border-[5px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-1.5 sm:my-2 max-h-[calc(100vh-0.75rem)] overflow-y-auto">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
-            <div className="w-full mb-3 sm:mb-4 md:mb-5 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 md:border-4 border-yellow-400 shadow-2xl">
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight italic uppercase tracking-tight mb-2 drop-shadow-lg">
+            <div className="w-full mb-2 sm:mb-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-2 sm:py-3 md:py-3.5 px-2 sm:px-3 md:px-4 rounded-lg sm:rounded-xl border-2 sm:border-3 border-yellow-400 shadow-xl">
+                <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-black text-white leading-tight italic uppercase tracking-tight mb-1 sm:mb-1.5 drop-shadow-lg">
                     🎉 CONGRATS, YOU WON! 🎉
                 </h2>
-                <div className="w-20 sm:w-28 md:w-36 h-1 sm:h-1.5 md:h-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 mx-auto rounded-full shadow-lg"></div>
+                <div className="w-16 sm:w-24 md:w-32 h-0.5 sm:h-1 md:h-1.5 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 mx-auto rounded-full shadow-md"></div>
             </div>
             
             {/* Rewards Container */}
-            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-5 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+            <div className="w-full grid gap-2 sm:gap-2.5 md:gap-3 mb-2 sm:mb-3 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
                 
                 {/* Main Voucher - Shows if within campaign date */}
                 {showStandardPrizes && (
@@ -171,7 +171,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
 
             {/* Additional Text Info */}
-            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
+            <div className="space-y-1.5 sm:space-y-2 mb-2 sm:mb-3 text-xs sm:text-sm w-full bg-red-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-red-100 shadow-inner">
                 {showLunch && (
                     <>
                         <p className="font-bold text-gray-800 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -193,8 +193,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
 
             {/* Share Section */}
-            <div className="w-full mb-3 sm:mb-4 md:mb-5">
-                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2 sm:mb-3">
+            <div className="w-full mb-2 sm:mb-2.5">
+                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-1.5 sm:mb-2">
                     <div className="h-px bg-gray-200 flex-1"></div>
                     <p className="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-wide sm:tracking-widest whitespace-nowrap">Share the Prosperity</p>
                     <div className="h-px bg-gray-200 flex-1"></div>
@@ -211,7 +211,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                 </div>
             </div>
 
-            <div className="w-full max-w-xl mx-auto mt-2 sm:mt-3">
+            <div className="w-full max-w-xl mx-auto mt-1.5 sm:mt-2">
                <button 
                 onClick={async () => {
                   if (!isLoadingMoreHuat) {
@@ -225,7 +225,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                   }
                 }}
                 disabled={isLoadingMoreHuat}
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[5px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-sm sm:text-base md:text-lg py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl shadow-[0_4px_20px_rgba(234,179,8,0.4)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[2px] sm:border-b-[3px] md:border-b-[4px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
                >
                  {isLoadingMoreHuat ? (
                    <>
