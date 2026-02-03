@@ -10,10 +10,12 @@ interface PrizeRevealProps {
   onMoreHuatClick: () => Promise<void>;
   onShareClick: (platform: 'linkedin' | 'whatsapp') => Promise<void>;
   onTngoClick: () => Promise<void>;
+  onRegisterClick: () => Promise<void>;
+  onLoginClick: () => Promise<void>;
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onRegisterClick, onLoginClick, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
@@ -44,6 +46,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
     email: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingMoreHuat, setIsLoadingMoreHuat] = useState(false);
 
   const jobPositions = [
     "Owner / Founder",
@@ -112,11 +115,11 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
-            <div className="w-full mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-red-50 via-yellow-50 to-red-50 py-3 sm:py-4 md:py-5 px-3 sm:px-4 rounded-xl sm:rounded-2xl border-2 sm:border-3 border-yellow-400 shadow-lg">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-red-700 leading-tight italic uppercase tracking-tight mb-2 sm:mb-3 drop-shadow-sm">
+            <div className="w-full mb-3 sm:mb-4 md:mb-6 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-4 sm:py-5 md:py-6 px-4 sm:px-5 rounded-xl sm:rounded-2xl border-3 sm:border-4 border-yellow-400 shadow-2xl">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight italic uppercase tracking-tight mb-2 sm:mb-3 drop-shadow-lg">
                     🎉 CONGRATS, YOU WON! 🎉
                 </h2>
-                <div className="w-24 sm:w-32 md:w-40 h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 mx-auto rounded-full shadow-md"></div>
+                <div className="w-24 sm:w-32 md:w-40 h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 mx-auto rounded-full shadow-lg"></div>
             </div>
             
             {/* Rewards Container */}
@@ -211,13 +214,30 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             <div className="w-full max-w-xl mx-auto">
                <button 
                 onClick={async () => {
-                  await onMoreHuatClick();
-                  setStep('REFERRAL');
+                  if (!isLoadingMoreHuat) {
+                    setIsLoadingMoreHuat(true);
+                    try {
+                      await onMoreHuatClick();
+                      setStep('REFERRAL');
+                    } finally {
+                      setIsLoadingMoreHuat(false);
+                    }
+                  }
                 }}
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-sm sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_4px_20px_rgba(234,179,8,0.4)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[6px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group"
+                disabled={isLoadingMoreHuat}
+                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-xl md:text-2xl py-4 sm:py-5 md:py-6 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[4px] sm:border-b-[5px] md:border-b-[6px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
                >
-                 <span>WANT MORE HUAT?</span>
-                 <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-xs sm:text-base"></i>
+                 {isLoadingMoreHuat ? (
+                   <>
+                     <span>LOADING...</span>
+                     <i className="fa-solid fa-spinner fa-spin text-base sm:text-xl"></i>
+                   </>
+                 ) : (
+                   <>
+                     <span>WANT MORE HUAT?</span>
+                     <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-base sm:text-xl"></i>
+                   </>
+                 )}
                </button>
             </div>
           </div>
@@ -388,21 +408,31 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
                  <div className="w-full max-w-md space-y-2 sm:space-y-3 md:space-y-4 px-2">
                      <a 
-                        href="https://ajobthing.com/register" 
+                        href="https://www.ajobthing.com/register?redirect=/campaign/rewards" 
                         target="_blank" 
                         rel="noreferrer"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await onRegisterClick();
+                          window.open('https://www.ajobthing.com/register?redirect=/campaign/rewards', '_blank');
+                        }}
                         className="block w-full bg-red-600 text-white font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest hover:-translate-y-1 text-center"
                      >
-                        Register Account
+                        Register Account <i className="fa-solid fa-user-plus ml-2"></i>
                      </a>
                      
                      <a 
-                        href="https://ajobthing.com/login" 
+                        href="https://www.ajobthing.com/login?redirect=/campaign/rewards" 
                         target="_blank" 
                         rel="noreferrer"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await onLoginClick();
+                          window.open('https://www.ajobthing.com/login?redirect=/campaign/rewards', '_blank');
+                        }}
                         className="block w-full bg-yellow-400 text-red-900 font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-yellow-300 transition-all uppercase tracking-wide sm:tracking-widest border-b-2 sm:border-b-4 border-yellow-600 hover:-translate-y-1 text-center"
                      >
-                        Login & Claim
+                        Login & Claim <i className="fa-solid fa-sign-in-alt ml-2"></i>
                      </a>
                  </div>
 

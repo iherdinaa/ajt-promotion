@@ -25,6 +25,8 @@ export interface SheetSubmissionData {
   click_share_whatsapp: string;
   click_tngo: string;
   click_more_huat: string;
+  click_register: string;
+  click_login: string;
   
   // Referral Data
   referral_name: string;

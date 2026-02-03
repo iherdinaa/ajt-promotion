@@ -71,7 +71,7 @@ async function getAccessToken(): Promise<string> {
 
 // Find row by email AND phone number to prevent duplicates
 async function findRowByEmailAndPhone(accessToken: string, email: string, phone: string): Promise<number | null> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:V`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:X`;
   
   const response = await fetch(url, {
     method: 'GET',
@@ -89,20 +89,29 @@ async function findRowByEmailAndPhone(accessToken: string, email: string, phone:
   
   // Find row with matching email AND phone number
   // email is column E (index 4), phone is column F (index 5)
+  console.log('[v0] Searching for email:', email, 'phone:', phone);
+  console.log('[v0] Total rows to search:', rows.length);
+  
   for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
-    const rowEmail = rows[i][4] || ''; // Column E
-    const rowPhone = rows[i][5] || ''; // Column F
-    if (rowEmail === email && rowPhone === phone) {
+    const rowEmail = (rows[i][4] || '').trim(); // Column E
+    const rowPhone = (rows[i][5] || '').trim(); // Column F
+    
+    console.log(`[v0] Row ${i + 1}: email="${rowEmail}" phone="${rowPhone}"`);
+    
+    if (rowEmail === email.trim() && rowPhone === phone.trim()) {
+      console.log('[v0] MATCH FOUND at row:', i + 1);
       return i + 1; // Return 1-indexed row number
     }
   }
+  
+  console.log('[v0] No matching row found');
   
   return null;
 }
 
 // Update existing row
 async function updateRow(accessToken: string, rowNumber: number, rowData: string[]): Promise<void> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:V${rowNumber}?valueInputOption=USER_ENTERED`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:X${rowNumber}?valueInputOption=USER_ENTERED`;
 
   const response = await fetch(url, {
     method: 'PUT',
@@ -123,7 +132,7 @@ async function updateRow(accessToken: string, rowNumber: number, rowData: string
 
 // Append new row to Google Sheet
 async function appendToSheet(accessToken: string, rowData: string[]): Promise<void> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:V:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:X:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -180,9 +189,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const accessToken = await getAccessToken();
     console.log('[v0] Got access token');
 
-    // Prepare row data matching the headers (A-V)
+    // Prepare row data matching the headers (A-X)
     // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, 
-    //          click_share_linkedin, click_share_whatsapp, click_tngo, click_more_huat,
+    //          click_share_linkedin, click_share_whatsapp, click_tngo, click_more_huat, click_register, click_login,
     //          referral_name, referral_phone, referral_position, referral_email, referral_companyname, 
     //          utm_source, utm_medium, utm_campaign
     const rowData = [
@@ -200,14 +209,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       data.click_share_whatsapp || 'no',                         // L: click_share_whatsapp
       data.click_tngo || 'no',                                   // M: click_tngo
       data.click_more_huat || 'no',                              // N: click_more_huat
-      data.referral_name || '',                                  // O: referral_name
-      data.referral_phone || '',                                 // P: referral_phone
-      data.referral_position || '',                              // Q: referral_position
-      data.referral_email || '',                                 // R: referral_email
-      data.referral_companyname || '',                           // S: referral_companyname
-      data.utm_source || 'direct',                               // T: utm_source
-      data.utm_medium || 'direct',                               // U: utm_medium
-      data.utm_campaign || 'direct',                             // V: utm_campaign
+      data.click_register || 'no',                               // O: click_register
+      data.click_login || 'no',                                  // P: click_login
+      data.referral_name || '',                                  // Q: referral_name
+      data.referral_phone || '',                                 // R: referral_phone
+      data.referral_position || '',                              // S: referral_position
+      data.referral_email || '',                                 // T: referral_email
+      data.referral_companyname || '',                           // U: referral_companyname
+      data.utm_source || 'direct',                               // V: utm_source
+      data.utm_medium || 'direct',                               // W: utm_medium
+      data.utm_campaign || 'direct',                             // X: utm_campaign
     ];
     console.log('[v0] Row data prepared');
 

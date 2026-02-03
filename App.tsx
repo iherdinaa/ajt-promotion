@@ -15,6 +15,8 @@ interface UserInteractions {
   clickShareWhatsapp: boolean;
   clickTngo: boolean;
   clickMoreHuat: boolean;
+  clickRegister: boolean;
+  clickLogin: boolean;
 }
 
 const App: React.FC = () => {
@@ -29,6 +31,8 @@ const App: React.FC = () => {
     clickShareWhatsapp: false,
     clickTngo: false,
     clickMoreHuat: false,
+    clickRegister: false,
+    clickLogin: false,
   });
   const [submissionTimestamp] = useState(() => new Date().toISOString());
 
@@ -64,6 +68,8 @@ const App: React.FC = () => {
       click_share_whatsapp: currentInteractions.clickShareWhatsapp ? 'yes' : 'no',
       click_tngo: currentInteractions.clickTngo ? 'yes' : 'no',
       click_more_huat: currentInteractions.clickMoreHuat ? 'yes' : 'no',
+      click_register: currentInteractions.clickRegister ? 'yes' : 'no',
+      click_login: currentInteractions.clickLogin ? 'yes' : 'no',
       referral_name: referral?.name || '',
       referral_phone: referral?.phone || '',
       referral_position: referral?.position || '',
@@ -155,6 +161,25 @@ const App: React.FC = () => {
     await submitData(userData, quizData, interactions, referral);
   };
 
+  // 7 & 8. Track Register/Login button clicks
+  const handleRegisterClick = async () => {
+    const newInteractions = { ...interactions, clickRegister: true };
+    setInteractions(newInteractions);
+    
+    if (userData && quizData) {
+      await submitData(userData, quizData, newInteractions);
+    }
+  };
+
+  const handleLoginClick = async () => {
+    const newInteractions = { ...interactions, clickLogin: true };
+    setInteractions(newInteractions);
+    
+    if (userData && quizData) {
+      await submitData(userData, quizData, newInteractions);
+    }
+  };
+
   return (
     <Layout isCompact={gameState !== 'ENTRY'}>
       {gameState === 'ENTRY' && <EntryPage onStart={handleStartSpin} />}
@@ -176,6 +201,8 @@ const App: React.FC = () => {
           onMoreHuatClick={handleMoreHuatClick}
           onShareClick={handleShareClick}
           onTngoClick={handleTngoClick}
+          onRegisterClick={handleRegisterClick}
+          onLoginClick={handleLoginClick}
           onReset={() => {
             setGameState('ENTRY');
             setSpinCount(0);
@@ -186,6 +213,8 @@ const App: React.FC = () => {
               clickShareWhatsapp: false,
               clickTngo: false,
               clickMoreHuat: false,
+              clickRegister: false,
+              clickLogin: false,
             });
           }}
         />
