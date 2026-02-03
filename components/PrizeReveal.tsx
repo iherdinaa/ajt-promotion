@@ -109,9 +109,9 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 text-center overflow-y-auto">
-      {/* Responsive container */}
-      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-5 md:p-7 lg:p-9 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-4 sm:my-6 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto">
+    <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 text-center overflow-y-auto">
+      {/* Responsive container - optimized for 13" laptops */}
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1rem] sm:rounded-[1.25rem] md:rounded-[1.5rem] p-3 sm:p-4 md:p-5 lg:p-6 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[3px] sm:border-[4px] md:border-[5px] lg:border-[6px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-2 sm:my-3 max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-1.5rem)] overflow-y-auto">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
@@ -245,30 +245,30 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
         {step === 'REFERRAL' && (
             <div className="animate-in fade-in slide-in-from-right duration-500 w-full text-left max-w-3xl mx-auto">
-                <div className="text-center mb-4 sm:mb-6 md:mb-8">
-                    <div className="inline-block bg-red-100 text-red-600 rounded-full p-2 sm:p-3 md:p-4 mb-2 sm:mb-4">
-                        <i className="fa-solid fa-users-viewfinder text-xl sm:text-3xl md:text-4xl"></i>
+                <div className="text-center mb-2 sm:mb-3 md:mb-4">
+                    <div className="inline-block bg-red-100 text-red-600 rounded-full p-2 sm:p-2.5 mb-2 sm:mb-3">
+                        <i className="fa-solid fa-users-viewfinder text-lg sm:text-2xl md:text-3xl"></i>
                     </div>
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-gray-800 uppercase tracking-tight mb-1 sm:mb-2">Refer a HR Friend</h2>
-                    <p className="text-gray-500 font-medium max-w-lg mx-auto text-xs sm:text-sm md:text-base px-2">
+                    <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-black text-gray-800 uppercase tracking-tight mb-1">Refer a HR Friend</h2>
+                    <p className="text-gray-500 font-medium max-w-lg mx-auto text-[10px] sm:text-xs md:text-sm px-2">
                         Refer a friend from the same or a different company to unlock more Huat rewards.
                     </p>
                 </div>
 
-                <form onSubmit={handleReferralSubmit} className="space-y-3 sm:space-y-4 md:space-y-6 bg-gray-50 p-3 sm:p-5 md:p-8 rounded-xl sm:rounded-2xl md:rounded-3xl border border-gray-100 shadow-inner">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                <form onSubmit={handleReferralSubmit} className="space-y-2 sm:space-y-3 md:space-y-4 bg-gray-50 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl border border-gray-100 shadow-inner">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                         {/* Name Field */}
                         <div className="relative group">
-                            <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Friend's Name</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase mb-1 ml-1">Friend's Name</label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                    <i className="fa-solid fa-user text-gray-300 group-focus-within:text-red-500 transition-colors text-xs sm:text-sm"></i>
+                                <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
+                                    <i className="fa-solid fa-user text-gray-300 group-focus-within:text-red-500 transition-colors text-[10px] sm:text-xs"></i>
                                 </div>
                                 <input 
                                     required 
                                     type="text" 
                                     placeholder="John Doe"
-                                    className="w-full bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl py-2 sm:py-2.5 md:py-3 pl-8 sm:pl-11 pr-3 sm:pr-4 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-2 sm:focus:ring-4 focus:ring-red-100 transition-all placeholder-gray-300 text-sm sm:text-base" 
+                                    className="w-full bg-white border-2 border-gray-200 rounded-lg py-1.5 sm:py-2 md:py-2.5 pl-7 sm:pl-9 pr-2 sm:pr-3 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-1 sm:focus:ring-2 focus:ring-red-100 transition-all placeholder-gray-300 text-xs sm:text-sm" 
                                     value={referralData.name}
                                     onChange={e => setReferralData({...referralData, name: e.target.value})}
                                 />
@@ -277,13 +277,13 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
                         {/* Position Field */}
                         <div className="relative group">
-                            <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Job Position</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase mb-1 ml-1">Job Position</label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                    <i className="fa-solid fa-briefcase text-gray-300 group-focus-within:text-red-500 transition-colors text-xs sm:text-sm"></i>
+                                <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
+                                    <i className="fa-solid fa-briefcase text-gray-300 group-focus-within:text-red-500 transition-colors text-[10px] sm:text-xs"></i>
                                 </div>
                                 <select 
-                                    className="w-full bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl py-2 sm:py-2.5 md:py-3 pl-8 sm:pl-11 pr-3 sm:pr-4 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-2 sm:focus:ring-4 focus:ring-red-100 transition-all appearance-none text-sm sm:text-base"
+                                    className="w-full bg-white border-2 border-gray-200 rounded-lg py-1.5 sm:py-2 md:py-2.5 pl-7 sm:pl-9 pr-2 sm:pr-3 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-1 sm:focus:ring-2 focus:ring-red-100 transition-all appearance-none text-xs sm:text-sm"
                                     value={referralData.position}
                                     onChange={e => setReferralData({...referralData, position: e.target.value})}
                                 >
@@ -291,8 +291,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                                         <option key={pos} value={pos}>{pos}</option>
                                     ))}
                                 </select>
-                                <div className="absolute inset-y-0 right-0 pr-3 sm:pr-4 flex items-center pointer-events-none">
-                                    <i className="fa-solid fa-chevron-down text-[10px] sm:text-xs text-gray-400"></i>
+                                <div className="absolute inset-y-0 right-0 pr-2 sm:pr-3 flex items-center pointer-events-none">
+                                    <i className="fa-solid fa-chevron-down text-[9px] sm:text-[10px] text-gray-400"></i>
                                 </div>
                             </div>
                             {referralData.position === 'Others' && (
@@ -306,16 +306,16 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
                         {/* Company Field */}
                         <div className="relative group">
-                            <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Company Name</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase mb-1 ml-1">Company Name</label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                    <i className="fa-solid fa-building text-gray-300 group-focus-within:text-red-500 transition-colors text-xs sm:text-sm"></i>
+                                <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
+                                    <i className="fa-solid fa-building text-gray-300 group-focus-within:text-red-500 transition-colors text-[10px] sm:text-xs"></i>
                                 </div>
                                 <input 
                                     required 
                                     type="text" 
                                     placeholder="Company Sdn Bhd"
-                                    className="w-full bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl py-2 sm:py-2.5 md:py-3 pl-8 sm:pl-11 pr-3 sm:pr-4 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-2 sm:focus:ring-4 focus:ring-red-100 transition-all placeholder-gray-300 text-sm sm:text-base" 
+                                    className="w-full bg-white border-2 border-gray-200 rounded-lg py-1.5 sm:py-2 md:py-2.5 pl-7 sm:pl-9 pr-2 sm:pr-3 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-1 sm:focus:ring-2 focus:ring-red-100 transition-all placeholder-gray-300 text-xs sm:text-sm" 
                                     value={referralData.companyName}
                                     onChange={e => setReferralData({...referralData, companyName: e.target.value})}
                                 />
@@ -324,37 +324,35 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
                         {/* Phone Field */}
                         <div className="relative group">
-                            <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Phone Number</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase mb-1 ml-1">Phone Number</label>
                             <div className="flex">
-                                <span className="bg-gray-100 border-2 border-r-0 border-gray-200 rounded-l-lg sm:rounded-l-xl px-2 sm:px-4 py-2 sm:py-2.5 md:py-3 font-bold text-gray-500 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                                <span className="bg-gray-100 border-2 border-r-0 border-gray-200 rounded-l-lg px-2 sm:px-3 py-1.5 sm:py-2 md:py-2.5 font-bold text-gray-500 flex items-center gap-1 text-[10px] sm:text-xs">
                                     <span>🇲🇾</span> +60
                                 </span>
                                 <input 
                                     required 
                                     type="tel" 
                                     placeholder="12 345 6789"
-                                    className="w-full bg-white border-2 border-l-0 border-gray-200 rounded-r-lg sm:rounded-r-xl py-2 sm:py-2.5 md:py-3 pr-3 sm:pr-4 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-2 sm:focus:ring-4 focus:ring-red-100 transition-all placeholder-gray-300 text-sm sm:text-base" 
+                                    className="w-full bg-white border-2 border-l-0 border-gray-200 rounded-r-lg py-1.5 sm:py-2 md:py-2.5 pr-2 sm:pr-3 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-1 sm:focus:ring-2 focus:ring-red-100 transition-all placeholder-gray-300 text-xs sm:text-sm" 
                                     value={referralData.phone}
-                                    onChange={e => {
-                                        const val = e.target.value.replace(/[^0-9]/g, '');
-                                        setReferralData({...referralData, phone: val});
-                                    }}
+                                    onChange={e => setReferralData({...referralData, phone: e.target.value})}
                                 />
                             </div>
+                        </div>
                         </div>
 
                         {/* Email Field */}
                         <div className="relative group sm:col-span-2">
-                            <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Email Address</label>
+                            <label className="block text-[9px] sm:text-[10px] font-black text-gray-500 uppercase mb-1 ml-1">Email Address</label>
                             <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-                                    <i className="fa-solid fa-envelope text-gray-300 group-focus-within:text-red-500 transition-colors text-xs sm:text-sm"></i>
+                                <div className="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
+                                    <i className="fa-solid fa-envelope text-gray-300 group-focus-within:text-red-500 transition-colors text-[10px] sm:text-xs"></i>
                                 </div>
                                 <input 
                                     required 
                                     type="email" 
                                     placeholder="friend@company.com"
-                                    className="w-full bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl py-2 sm:py-2.5 md:py-3 pl-8 sm:pl-11 pr-3 sm:pr-4 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-2 sm:focus:ring-4 focus:ring-red-100 transition-all placeholder-gray-300 text-sm sm:text-base" 
+                                    className="w-full bg-white border-2 border-gray-200 rounded-lg py-1.5 sm:py-2 md:py-2.5 pl-7 sm:pl-9 pr-2 sm:pr-3 font-bold text-gray-800 focus:outline-none focus:border-red-500 focus:ring-1 sm:focus:ring-2 focus:ring-red-100 transition-all placeholder-gray-300 text-xs sm:text-sm" 
                                     value={referralData.email}
                                     onChange={e => setReferralData({...referralData, email: e.target.value})}
                                 />
@@ -362,19 +360,19 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                         </div>
                     </div>
 
-                    <div className="pt-2 sm:pt-3 md:pt-4 space-y-2 sm:space-y-3">
+                    <div className="pt-2 sm:pt-2.5 space-y-1.5 sm:space-y-2">
                         <button 
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-red-600 text-white font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-red-600 text-white font-black text-xs sm:text-sm md:text-base py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest transform active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isSubmitting ? 'Submitting...' : 'Submit Referral'} <i className={`fa-solid ${isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'} ml-1 sm:ml-2 text-xs sm:text-base`}></i>
+                            {isSubmitting ? 'Submitting...' : 'Submit Referral'} <i className={`fa-solid ${isSubmitting ? 'fa-spinner fa-spin' : 'fa-paper-plane'} ml-1 text-[10px] sm:text-xs`}></i>
                         </button>
                         
                         <button 
                             type="button"
                             onClick={() => setStep('REVEAL')}
-                            className="w-full text-gray-400 font-bold text-xs sm:text-sm py-2 sm:py-3 hover:text-red-500 hover:bg-red-50 rounded-lg sm:rounded-xl transition-colors"
+                            className="w-full text-gray-400 font-bold text-[10px] sm:text-xs py-1.5 sm:py-2 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                         >
                             Cancel & Back to Rewards
                         </button>
@@ -385,28 +383,29 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
         {step === 'REFERRAL_SUCCESS' && (
             <div className="animate-in fade-in zoom-in duration-500 w-full flex flex-col items-center">
-                 <h2 className="text-xl sm:text-2xl md:text-4xl font-black text-red-700 uppercase tracking-tighter mb-2 sm:mb-4 leading-tight text-center px-2">
+                 <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-red-700 uppercase tracking-tighter mb-2 sm:mb-3 leading-tight text-center px-2">
                     Congrats, You Won<br/>
-                    <span className="text-yellow-600 bg-yellow-50 px-1 sm:px-2 rounded-md sm:rounded-lg text-lg sm:text-xl md:text-3xl">1 Free Internship Job Ad!</span>
+                    <span className="text-yellow-600 bg-yellow-50 px-1 sm:px-2 rounded-md sm:rounded-lg text-base sm:text-lg md:text-xl">1 Free Internship Job Ad!</span>
                  </h2>
                  
-                 <div className="w-full max-w-[200px] sm:max-w-xs md:max-w-sm mb-4 sm:mb-6 md:mb-8 relative group">
-                    <div className="absolute inset-0 bg-yellow-400/30 blur-xl sm:blur-2xl rounded-full animate-pulse"></div>
+                 <div className="w-full max-w-[140px] sm:max-w-[180px] md:max-w-[220px] mb-2 sm:mb-3 md:mb-4 relative group">
+                    <div className="absolute inset-0 bg-yellow-400/30 blur-lg sm:blur-xl rounded-full animate-pulse"></div>
                     <img 
                         src="https://files.ajt.my/images/marketing-campaign/image-410dff8d-530c-4496-9e94-58d9aa3d8a54.png" 
                         alt="Internship Reward" 
-                        className="relative z-10 w-full h-auto object-contain drop-shadow-2xl transform group-hover:scale-105 transition-transform duration-500"
+                        className="relative z-10 w-full h-auto object-contain drop-shadow-xl transform group-hover:scale-105 transition-transform duration-500"
+                        loading="eager"
                     />
                  </div>
 
-                 <div className="bg-gray-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border border-gray-200 mb-4 sm:mb-6 md:mb-8 max-w-lg w-full">
-                     <p className="text-gray-600 font-bold text-center leading-relaxed text-xs sm:text-sm md:text-base">
+                 <div className="bg-gray-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border border-gray-200 mb-2 sm:mb-3 md:mb-4 max-w-lg w-full">
+                     <p className="text-gray-600 font-bold text-center leading-snug text-[11px] sm:text-xs md:text-sm">
                         If you don't have an AJobThing account, please make sure to <span className="text-red-600">register</span>. <br/>
                         If you have an account, please <span className="text-yellow-600">login and claim</span>.
                      </p>
                  </div>
 
-                 <div className="w-full max-w-md space-y-2 sm:space-y-3 md:space-y-4 px-2">
+                 <div className="w-full max-w-md space-y-2 sm:space-y-2.5 px-2">
                      <a 
                         href="https://www.ajobthing.com/register?redirect=/campaign/rewards" 
                         target="_blank" 
@@ -416,9 +415,9 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                           await onRegisterClick();
                           window.open('https://www.ajobthing.com/register?redirect=/campaign/rewards', '_blank');
                         }}
-                        className="block w-full bg-red-600 text-white font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest hover:-translate-y-1 text-center"
+                        className="block w-full bg-red-600 text-white font-black text-xs sm:text-sm md:text-base lg:text-lg py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest hover:-translate-y-1 text-center"
                      >
-                        Register Account <i className="fa-solid fa-user-plus ml-2"></i>
+                        Register Account <i className="fa-solid fa-user-plus ml-1 sm:ml-2"></i>
                      </a>
                      
                      <a 
@@ -430,15 +429,15 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                           await onLoginClick();
                           window.open('https://www.ajobthing.com/login?redirect=/campaign/rewards', '_blank');
                         }}
-                        className="block w-full bg-yellow-400 text-red-900 font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-yellow-300 transition-all uppercase tracking-wide sm:tracking-widest border-b-2 sm:border-b-4 border-yellow-600 hover:-translate-y-1 text-center"
+                        className="block w-full bg-yellow-400 text-red-900 font-black text-xs sm:text-sm md:text-base lg:text-lg py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl shadow-lg hover:bg-yellow-300 transition-all uppercase tracking-wide sm:tracking-widest border-b-2 sm:border-b-3 border-yellow-600 hover:-translate-y-1 text-center"
                      >
-                        Login & Claim <i className="fa-solid fa-sign-in-alt ml-2"></i>
+                        Login & Claim <i className="fa-solid fa-sign-in-alt ml-1 sm:ml-2"></i>
                      </a>
                  </div>
 
                  <button 
                     onClick={() => onReset()}
-                    className="mt-4 sm:mt-6 md:mt-8 text-gray-400 font-bold text-xs sm:text-sm hover:text-red-500 underline decoration-2 decoration-red-200"
+                    className="mt-3 sm:mt-4 text-gray-400 font-bold text-[10px] sm:text-xs hover:text-red-500 underline decoration-2 decoration-red-200"
                  >
                     Back to Start
                  </button>
