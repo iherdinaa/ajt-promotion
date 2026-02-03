@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { UserData } from '../types';
-import { IMAGES, MAJOR_REWARDS, FLOATING_VOUCHERS, RM2888_VOUCHER } from '../constants';
+import { IMAGES, FLOATING_VOUCHERS, RM2888_VOUCHER } from '../constants';
 
 interface EntryPageProps {
   onStart: (data: UserData) => Promise<void>;
@@ -67,12 +67,22 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
         
         {/* Left Column: Huge Title & Copy & Major Rewards */}
         <div className="w-full lg:w-3/5 flex flex-col items-center text-center animate-slide-up space-y-1 relative">
-          <img 
-            src={IMAGES.campaignHeader} 
-            alt="A HUAT THING" 
-            className="w-full max-w-[180px] sm:max-w-[240px] md:max-w-[300px] lg:max-w-[380px] h-auto drop-shadow-2xl filter brightness-110"
-            loading="eager"
-          />
+          {IMAGES.campaignHeader ? (
+            <img 
+              src={IMAGES.campaignHeader} 
+              alt="A HUAT THING" 
+              className="w-full max-w-[180px] sm:max-w-[240px] md:max-w-[300px] lg:max-w-[380px] h-auto drop-shadow-2xl filter brightness-110"
+              loading="eager"
+              onError={(e) => {
+                console.log('[v0] Campaign header image failed to load');
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ) : (
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-yellow-400 drop-shadow-2xl">
+              A HUAT THING
+            </h1>
+          )}
           
           <div className="max-w-2xl w-full flex flex-col items-center space-y-2">
             {/* Copy */}
