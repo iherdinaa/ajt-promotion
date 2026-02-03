@@ -58,7 +58,6 @@ async function getAccessToken(): Promise<string> {
   const data = await response.json();
   return data.access_token;
 }
-}
 
 // Check if user already exists by email AND phone
 async function checkUserExists(accessToken: string, email: string, phone: string): Promise<boolean> {
