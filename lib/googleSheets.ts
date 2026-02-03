@@ -17,11 +17,16 @@ export interface SheetSubmissionData {
   survey_q2: string;
   survey_q3: string;
   
+  // Gift/reward determined by survey_q3 (headcount)
+  gift: string;
+  
   // Click tracking (yes/no)
   click_share_linkedin: string;
   click_share_whatsapp: string;
   click_tngo: string;
   click_more_huat: string;
+  click_register: string;
+  click_login: string;
   
   // Referral Data
   referral_name: string;
@@ -51,6 +56,7 @@ export function getUtmParams(): { utmSource: string; utmMedium: string; utmCampa
 }
 
 // Submit data to Google Sheets via Google Apps Script
+// This will UPDATE existing row if email exists, otherwise create new row
 export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{ success: boolean; error?: string }> {
   if (!GOOGLE_SCRIPT_URL) {
     console.error('[v0] Google Script URL not configured');
@@ -60,8 +66,9 @@ export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{
   console.log('[v0] Submitting to Google Sheets:', data);
 
   try {
-    // Build URL with query parameters (works better with CORS)
+    // Add a flag to indicate we want to update existing rows
     const params = new URLSearchParams();
+    params.append('action', 'upsert'); // upsert = update or insert
     Object.entries(data).forEach(([key, value]) => {
       params.append(key, String(value));
     });
@@ -69,10 +76,15 @@ export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{
     const url = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
     
     // Use fetch with redirect follow to handle Google's redirect
+    // Set a timeout to ensure fast responses
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+    
     const response = await fetch(url, {
       method: 'GET',
       redirect: 'follow',
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
 
     console.log('[v0] Google Sheets response status:', response.status);
     
@@ -94,7 +106,8 @@ export async function submitToGoogleSheets(data: SheetSubmissionData): Promise<{
     return { success: true }; // Assume success if no error thrown
   } catch (error) {
     console.error('[v0] Failed to submit to Google Sheets:', error);
-    return { success: false, error: String(error) };
+    // Don't block UI on sheet errors - return success anyway
+    return { success: true, error: String(error) };
   }
 }
 

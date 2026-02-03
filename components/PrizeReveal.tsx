@@ -10,10 +10,12 @@ interface PrizeRevealProps {
   onMoreHuatClick: () => Promise<void>;
   onShareClick: (platform: 'linkedin' | 'whatsapp') => Promise<void>;
   onTngoClick: () => Promise<void>;
+  onRegisterClick: () => Promise<void>;
+  onLoginClick: () => Promise<void>;
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onRegisterClick, onLoginClick, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
@@ -44,6 +46,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
     email: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingMoreHuat, setIsLoadingMoreHuat] = useState(false);
 
   const jobPositions = [
     "Owner / Founder",
@@ -106,21 +109,21 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 md:p-6 text-center overflow-y-auto">
+    <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 text-center overflow-hidden">
       {/* Responsive container */}
-      <div className="max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-3 sm:p-5 md:p-8 shadow-[0_0_40px_rgba(234,179,8,0.3)] sm:shadow-[0_0_80px_rgba(234,179,8,0.4)] relative border-[4px] sm:border-[6px] md:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col justify-start sm:justify-center my-2 sm:my-auto min-h-0 sm:min-h-[60vh]">
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-3 sm:p-4 md:p-5 lg:p-6 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-3 sm:my-4 max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
-            <div className="w-full mb-3 sm:mb-4 md:mb-6">
-                <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black text-red-700 leading-tight italic uppercase tracking-tighter mb-1 sm:mb-2">
-                    CONGRATS, YOU WON!
+            <div className="w-full mb-2 sm:mb-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 md:border-4 border-yellow-400 shadow-2xl">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight italic uppercase tracking-tight mb-2 drop-shadow-lg">
+                    🎉 CONGRATS, YOU WON! 🎉
                 </h2>
-                <div className="w-20 sm:w-28 md:w-32 h-1 sm:h-1.5 md:h-2 bg-yellow-400 mx-auto rounded-full mb-1 sm:mb-2"></div>
+                <div className="w-20 sm:w-28 md:w-36 h-1 sm:h-1.5 md:h-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 mx-auto rounded-full shadow-lg"></div>
             </div>
             
             {/* Rewards Container */}
-            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-8 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
                 
                 {/* Main Voucher - Shows if within campaign date */}
                 {showStandardPrizes && (
@@ -129,7 +132,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                       <img 
                           src={rewardData.image} 
                           alt="Voucher" 
-                          className="w-full h-auto rounded-md sm:rounded-lg max-h-32 sm:max-h-44 md:max-h-56 object-contain group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-auto rounded-md sm:rounded-lg max-h-32 sm:max-h-44 md:max-h-56 object-contain group-hover:scale-105 transition-transform duration-200"
+                          loading="eager"
                       />
                   </div>
                 )}
@@ -148,6 +152,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                             src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
                             alt="TnG" 
                             className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
+                            loading="lazy"
                         />
                         <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
                             Tap to Reveal Code
@@ -159,14 +164,14 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                  {showStandardPrizes && rewardData.hasBillboard && (
                      <div className="bg-yellow-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-yellow-200 shadow-lg flex flex-col items-center justify-between relative hover:bg-yellow-100 transition-colors h-full min-h-[10rem] sm:min-h-[14rem] md:min-h-[16rem]">
                         <span className="text-[10px] sm:text-xs font-black text-yellow-600 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full whitespace-nowrap">A Chance to Get</span>
-                        <img src={REWARD_IMAGES.billboard} alt="Billboard" className="w-full h-20 sm:h-28 md:h-32 object-contain my-1 sm:my-2" />
+                        <img src={REWARD_IMAGES.billboard} alt="Billboard" className="w-full h-20 sm:h-28 md:h-32 object-contain my-1 sm:my-2" loading="lazy" />
                         <span className="text-xs sm:text-sm font-bold text-center leading-tight text-yellow-800">Free Billboard Ad* worth RM5,000</span>
                      </div>
                  )}
             </div>
 
             {/* Additional Text Info */}
-            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
+            <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
                 {showLunch && (
                     <>
                         <p className="font-bold text-gray-800 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -188,34 +193,51 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
 
             {/* Share Section */}
-            <div className="w-full mb-4 sm:mb-6 md:mb-8">
-                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2 sm:mb-4">
+            <div className="w-full mb-2 sm:mb-3">
+                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2">
                     <div className="h-px bg-gray-200 flex-1"></div>
                     <p className="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-wide sm:tracking-widest whitespace-nowrap">Share the Prosperity</p>
                     <div className="h-px bg-gray-200 flex-1"></div>
                 </div>
-                <div className="flex gap-2 sm:gap-4 justify-center">
-                    <button onClick={() => handleShare('whatsapp')} className="flex items-center gap-1.5 sm:gap-3 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-whatsapp text-base sm:text-xl md:text-2xl"></i> 
-                        <span className="text-xs sm:text-base md:text-lg">WhatsApp</span>
+                <div className="flex gap-2 sm:gap-3 justify-center">
+                    <button onClick={() => handleShare('whatsapp')} className="flex items-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
+                        <i className="fa-brands fa-whatsapp text-base sm:text-lg md:text-xl"></i> 
+                        <span className="text-xs sm:text-sm md:text-base">WhatsApp</span>
                     </button>
-                    <button onClick={() => handleShare('linkedin')} className="flex items-center gap-1.5 sm:gap-3 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-linkedin text-base sm:text-xl md:text-2xl"></i> 
-                        <span className="text-xs sm:text-base md:text-lg">LinkedIn</span>
+                    <button onClick={() => handleShare('linkedin')} className="flex items-center gap-1.5 sm:gap-2 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
+                        <i className="fa-brands fa-linkedin text-base sm:text-lg md:text-xl"></i> 
+                        <span className="text-xs sm:text-sm md:text-base">LinkedIn</span>
                     </button>
                 </div>
             </div>
 
-            <div className="w-full max-w-xl mx-auto">
+            <div className="w-full max-w-xl mx-auto mt-2 sm:mt-3">
                <button 
                 onClick={async () => {
-                  await onMoreHuatClick();
-                  setStep('REFERRAL');
+                  if (!isLoadingMoreHuat) {
+                    setIsLoadingMoreHuat(true);
+                    try {
+                      await onMoreHuatClick();
+                      setStep('REFERRAL');
+                    } finally {
+                      setIsLoadingMoreHuat(false);
+                    }
+                  }
                 }}
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-sm sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_4px_20px_rgba(234,179,8,0.4)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[6px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group"
+                disabled={isLoadingMoreHuat}
+                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[5px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
                >
-                 <span>WANT MORE HUAT?</span>
-                 <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-xs sm:text-base"></i>
+                 {isLoadingMoreHuat ? (
+                   <>
+                     <span>LOADING...</span>
+                     <i className="fa-solid fa-spinner fa-spin text-base sm:text-lg"></i>
+                   </>
+                 ) : (
+                   <>
+                     <span>WANT MORE HUAT?</span>
+                     <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-base sm:text-lg"></i>
+                   </>
+                 )}
                </button>
             </div>
           </div>
@@ -223,8 +245,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
         {step === 'REFERRAL' && (
             <div className="animate-in fade-in slide-in-from-right duration-500 w-full text-left max-w-3xl mx-auto">
-                <div className="text-center mb-4 sm:mb-6 md:mb-8">
-                    <div className="inline-block bg-red-100 text-red-600 rounded-full p-2 sm:p-3 md:p-4 mb-2 sm:mb-4">
+                <div className="text-center mb-3 sm:mb-4">
+                    <div className="inline-block bg-red-100 text-red-600 rounded-full p-2 sm:p-3 md:p-4 mb-2 sm:mb-3">
                         <i className="fa-solid fa-users-viewfinder text-xl sm:text-3xl md:text-4xl"></i>
                     </div>
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-gray-800 uppercase tracking-tight mb-1 sm:mb-2">Refer a HR Friend</h2>
@@ -233,8 +255,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                     </p>
                 </div>
 
-                <form onSubmit={handleReferralSubmit} className="space-y-3 sm:space-y-4 md:space-y-6 bg-gray-50 p-3 sm:p-5 md:p-8 rounded-xl sm:rounded-2xl md:rounded-3xl border border-gray-100 shadow-inner">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                <form onSubmit={handleReferralSubmit} className="space-y-3 sm:space-y-4 bg-gray-50 p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border border-gray-100 shadow-inner">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {/* Name Field */}
                         <div className="relative group">
                             <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Friend's Name</label>
@@ -386,21 +408,31 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
                  <div className="w-full max-w-md space-y-2 sm:space-y-3 md:space-y-4 px-2">
                      <a 
-                        href="https://ajobthing.com/register" 
+                        href="https://www.ajobthing.com/register?redirect=/campaign/rewards" 
                         target="_blank" 
                         rel="noreferrer"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await onRegisterClick();
+                          window.open('https://www.ajobthing.com/register?redirect=/campaign/rewards', '_blank');
+                        }}
                         className="block w-full bg-red-600 text-white font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest hover:-translate-y-1 text-center"
                      >
-                        Register Account
+                        Register Account <i className="fa-solid fa-user-plus ml-2"></i>
                      </a>
                      
                      <a 
-                        href="https://ajobthing.com/login" 
+                        href="https://www.ajobthing.com/login?redirect=/campaign/rewards" 
                         target="_blank" 
                         rel="noreferrer"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await onLoginClick();
+                          window.open('https://www.ajobthing.com/login?redirect=/campaign/rewards', '_blank');
+                        }}
                         className="block w-full bg-yellow-400 text-red-900 font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-yellow-300 transition-all uppercase tracking-wide sm:tracking-widest border-b-2 sm:border-b-4 border-yellow-600 hover:-translate-y-1 text-center"
                      >
-                        Login & Claim
+                        Login & Claim <i className="fa-solid fa-sign-in-alt ml-2"></i>
                      </a>
                  </div>
 
