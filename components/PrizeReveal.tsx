@@ -112,11 +112,11 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
-            <div className="w-full mb-3 sm:mb-4 md:mb-6">
-                <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black text-red-700 leading-tight italic uppercase tracking-tighter mb-1 sm:mb-2">
-                    CONGRATS, YOU WON!
+            <div className="w-full mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-red-50 via-yellow-50 to-red-50 py-3 sm:py-4 md:py-5 px-3 sm:px-4 rounded-xl sm:rounded-2xl border-2 sm:border-3 border-yellow-400 shadow-lg">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-red-700 leading-tight italic uppercase tracking-tight mb-2 sm:mb-3 drop-shadow-sm">
+                    🎉 CONGRATS, YOU WON! 🎉
                 </h2>
-                <div className="w-20 sm:w-28 md:w-32 h-1 sm:h-1.5 md:h-2 bg-yellow-400 mx-auto rounded-full mb-1 sm:mb-2"></div>
+                <div className="w-24 sm:w-32 md:w-40 h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400 mx-auto rounded-full shadow-md"></div>
             </div>
             
             {/* Rewards Container */}

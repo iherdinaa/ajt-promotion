@@ -17,6 +17,9 @@ export interface SheetSubmissionData {
   survey_q2: string;
   survey_q3: string;
   
+  // Gift/reward determined by survey_q3 (headcount)
+  gift: string;
+  
   // Click tracking (yes/no)
   click_share_linkedin: string;
   click_share_whatsapp: string;

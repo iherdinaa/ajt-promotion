@@ -48,6 +48,9 @@ const App: React.FC = () => {
     currentInteractions: UserInteractions,
     referral?: ReferralData
   ) => {
+    // Calculate gift based on survey_q3 (headcount)
+    const gift = quiz?.headcount ? determineGift(quiz.headcount) : '';
+    
     const submissionData: SheetSubmissionData = {
       timestamp: submissionTimestamp,
       company_name: user.companyName,
@@ -56,6 +59,7 @@ const App: React.FC = () => {
       survey_q1: quiz?.resignationFrequency || '',
       survey_q2: quiz?.hiringPlan || '',
       survey_q3: quiz?.headcount || '',
+      gift: gift,
       click_share_linkedin: currentInteractions.clickShareLinkedin ? 'yes' : 'no',
       click_share_whatsapp: currentInteractions.clickShareWhatsapp ? 'yes' : 'no',
       click_tngo: currentInteractions.clickTngo ? 'yes' : 'no',
@@ -65,9 +69,9 @@ const App: React.FC = () => {
       referral_position: referral?.position || '',
       referral_email: referral?.email || '',
       referral_companyname: referral?.companyName || '',
-      utm_campaign: utmParams.utmCampaign,
-      utm_source: utmParams.utmSource,
-      utm_medium: utmParams.utmMedium,
+      utm_campaign: utmParams.utmCampaign || 'direct',
+      utm_source: utmParams.utmSource || 'direct',
+      utm_medium: utmParams.utmMedium || 'direct',
     };
     await submitToGoogleSheets(submissionData);
   };
@@ -101,14 +105,14 @@ const App: React.FC = () => {
     setGameState('REVEAL');
   };
 
-  // Determine gift based on headcount
+  // Determine gift based on headcount (survey_q3)
   const determineGift = (headcount: string): string => {
-    if (headcount === "1 - 5 people") return "Tier 1 Voucher";
-    if (headcount === "6 - 10 people") return "Tier 2 Voucher + Billboard Chance";
-    if (headcount === "11 - 30 people") return "Tier 3 Voucher + Billboard Chance";
-    if (headcount === "31 - 100 people") return "Tier 4 Voucher + Billboard Chance";
-    if (headcount === "100 people") return "Tier 5 Voucher + Billboard Chance";
-    return "Tier 1 Voucher";
+    if (headcount === "1 - 5 people") return "Disc RM288 off AJobThing Voucher";
+    if (headcount === "6 - 10 people") return "Disc RM588 off AJobThing Voucher + FREE Billboard Ad";
+    if (headcount === "11 - 30 people") return "Disc RM988 off AJobThing Voucher + FREE Billboard Ad";
+    if (headcount === "31 - 100 people") return "Disc RM1,888 off AJobThing Voucher + FREE Billboard Ad";
+    if (headcount === "100 people") return "Disc RM1,888 off AJobThing Voucher + FREE Billboard Ad";
+    return "Disc RM288 off AJobThing Voucher";
   };
 
   // 3. Track "Click More Huat"

@@ -69,9 +69,9 @@ async function getAccessToken(): Promise<string> {
   return tokenData.access_token;
 }
 
-// Find row by email
-async function findRowByEmail(accessToken: string, email: string): Promise<number | null> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:R`;
+// Find row by email AND phone number to prevent duplicates
+async function findRowByEmailAndPhone(accessToken: string, email: string, phone: string): Promise<number | null> {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:V`;
   
   const response = await fetch(url, {
     method: 'GET',
@@ -87,9 +87,12 @@ async function findRowByEmail(accessToken: string, email: string): Promise<numbe
   const data = await response.json();
   const rows = data.values || [];
   
-  // Find row with matching email (email is column 5, index 4)
+  // Find row with matching email AND phone number
+  // email is column E (index 4), phone is column F (index 5)
   for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
-    if (rows[i][4] === email) {
+    const rowEmail = rows[i][4] || ''; // Column E
+    const rowPhone = rows[i][5] || ''; // Column F
+    if (rowEmail === email && rowPhone === phone) {
       return i + 1; // Return 1-indexed row number
     }
   }
@@ -99,7 +102,7 @@ async function findRowByEmail(accessToken: string, email: string): Promise<numbe
 
 // Update existing row
 async function updateRow(accessToken: string, rowNumber: number, rowData: string[]): Promise<void> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:R${rowNumber}?valueInputOption=USER_ENTERED`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:V${rowNumber}?valueInputOption=USER_ENTERED`;
 
   const response = await fetch(url, {
     method: 'PUT',
@@ -120,7 +123,7 @@ async function updateRow(accessToken: string, rowNumber: number, rowData: string
 
 // Append new row to Google Sheet
 async function appendToSheet(accessToken: string, rowData: string[]): Promise<void> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:R:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:V:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -177,42 +180,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const accessToken = await getAccessToken();
     console.log('[v0] Got access token');
 
-    // Prepare row data matching the headers
-    // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, referral_name, referral_company, referral_email, referral_phone, referral_position, utm_source, utm_medium, utm_campaign
+    // Prepare row data matching the headers (A-V)
+    // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, 
+    //          click_share_linkedin, click_share_whatsapp, click_tngo, click_more_huat,
+    //          referral_name, referral_phone, referral_position, referral_email, referral_companyname, 
+    //          utm_source, utm_medium, utm_campaign
     const rowData = [
-      data.timestamp || new Date().toISOString(),
-      data.action || '',
-      data.entry_point || '',
-      data.company_name || '',
-      data.email || '',
-      data.phone_number || '',
-      data.survey_q1 || '',
-      data.survey_q2 || '',
-      data.survey_q3 || '',
-      data.gift || '',
-      data.referral_name || '',
-      data.referral_company || '',
-      data.referral_email || '',
-      data.referral_phone || '',
-      data.referral_position || '',
-      data.utm_source || '',
-      data.utm_medium || '',
-      data.utm_campaign || '',
+      data.timestamp || new Date().toISOString(),               // A: timestamp
+      data.action || '',                                         // B: action
+      data.entry_point || '',                                    // C: entry_point
+      data.company_name || '',                                   // D: company_name
+      data.email || '',                                          // E: email (unique key 1)
+      data.phone_number || '',                                   // F: phone_number (unique key 2)
+      data.survey_q1 || '',                                      // G: survey_q1
+      data.survey_q2 || '',                                      // H: survey_q2
+      data.survey_q3 || '',                                      // I: survey_q3
+      data.gift || '',                                           // J: gift
+      data.click_share_linkedin || 'no',                         // K: click_share_linkedin
+      data.click_share_whatsapp || 'no',                         // L: click_share_whatsapp
+      data.click_tngo || 'no',                                   // M: click_tngo
+      data.click_more_huat || 'no',                              // N: click_more_huat
+      data.referral_name || '',                                  // O: referral_name
+      data.referral_phone || '',                                 // P: referral_phone
+      data.referral_position || '',                              // Q: referral_position
+      data.referral_email || '',                                 // R: referral_email
+      data.referral_companyname || '',                           // S: referral_companyname
+      data.utm_source || 'direct',                               // T: utm_source
+      data.utm_medium || 'direct',                               // U: utm_medium
+      data.utm_campaign || 'direct',                             // V: utm_campaign
     ];
     console.log('[v0] Row data prepared');
 
-    // Check if row exists for this email
-    console.log('[v0] Checking for existing row...');
-    const existingRow = await findRowByEmail(accessToken, data.email);
+    // Check if row exists for this email AND phone number
+    console.log('[v0] Checking for existing row by email and phone...');
+    const existingRow = await findRowByEmailAndPhone(accessToken, data.email, data.phone_number);
     
     if (existingRow) {
       // Update existing row
-      console.log('[v0] Updating existing row:', existingRow);
+      console.log('[v0] Found existing row:', existingRow, '- Updating...');
       await updateRow(accessToken, existingRow, rowData);
       console.log('[v0] Successfully updated row');
     } else {
       // Append new row
-      console.log('[v0] Appending new row...');
+      console.log('[v0] No existing row found - Appending new row...');
       await appendToSheet(accessToken, rowData);
       console.log('[v0] Successfully appended to sheet');
     }
