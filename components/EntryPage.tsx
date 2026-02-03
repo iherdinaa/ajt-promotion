@@ -161,7 +161,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
           <img 
             src={IMAGES.campaignHeader} 
             alt="A HUAT THING" 
-            className="w-full max-w-[180px] sm:max-w-[240px] md:max-w-[300px] lg:max-w-[380px] h-auto drop-shadow-2xl filter brightness-110"
+            className="w-full max-w-[220px] sm:max-w-[280px] md:max-w-[360px] lg:max-w-[460px] h-auto drop-shadow-2xl filter brightness-110"
             loading="eager"
           />
           
@@ -182,7 +182,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
                <div className="flex flex-row justify-center items-end -space-x-2 sm:-space-x-4 md:-space-x-6 lg:-space-x-8">
                   {MAJOR_REWARDS.map((reward, idx) => (
                     <div key={idx} className="relative group transition-all duration-200 hover:-translate-y-3 hover:z-50 hover:scale-105 z-10">
-                        <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-48 lg:h-48 drop-shadow-[0_8px_8px_rgba(0,0,0,0.4)] sm:drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] filter brightness-110">
+                        <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-44 md:h-44 lg:w-56 lg:h-56 drop-shadow-[0_8px_8px_rgba(0,0,0,0.4)] sm:drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] filter brightness-110">
                             <img src={reward.img} alt={reward.label} className="w-full h-full object-contain" loading="lazy" />
                         </div>
                         <div className="absolute inset-0 bg-yellow-400/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
