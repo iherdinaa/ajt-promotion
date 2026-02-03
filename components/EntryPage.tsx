@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { UserData } from '../types';
-import { IMAGES, FLOATING_VOUCHERS, RM2888_VOUCHER } from '../constants';
+import { IMAGES, MAJOR_REWARDS, FLOATING_VOUCHERS, RM2888_VOUCHER } from '../constants';
 
 interface EntryPageProps {
   onStart: (data: UserData) => Promise<void>;
@@ -60,29 +60,40 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16 overflow-y-auto overflow-x-hidden py-2 sm:py-4">
       
+      {/* Scattered Floating Vouchers - Visible Layer */}
+      {/* Reduced for better performance on all devices */}
+      <div className="absolute inset-0 pointer-events-none overflow-visible z-0">
+         {voucherPositions.slice(0, 3).map((pos, i) => (
+             <img 
+                key={i}
+                src={getVoucherImg(i)}
+                alt=""
+                className="absolute w-12 sm:w-16 md:w-20 lg:w-28 drop-shadow-lg float-animation opacity-70 hidden md:block"
+                style={{
+                    top: pos.top,
+                    left: pos.left,
+                    animationDelay: pos.delay,
+                    transform: `rotate(${pos.rotate})`,
+                }}
+                loading="lazy"
+             />
+         ))}
+      </div>
 
+      {/* Central Connectivity Layer */}
+      <div className="absolute inset-0 central-glow pointer-events-none z-[-1]"></div>
       
       {/* Main Container - Left Title, Right Form */}
       <div className="w-full max-w-[1200px] xl:max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8 xl:gap-12 z-10 relative">
         
         {/* Left Column: Huge Title & Copy & Major Rewards */}
         <div className="w-full lg:w-3/5 flex flex-col items-center text-center animate-slide-up space-y-1 relative">
-          {IMAGES.campaignHeader ? (
-            <img 
-              src={IMAGES.campaignHeader} 
-              alt="A HUAT THING" 
-              className="w-full max-w-[180px] sm:max-w-[240px] md:max-w-[300px] lg:max-w-[380px] h-auto drop-shadow-2xl filter brightness-110"
-              loading="eager"
-              onError={(e) => {
-                console.log('[v0] Campaign header image failed to load');
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          ) : (
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-yellow-400 drop-shadow-2xl">
-              A HUAT THING
-            </h1>
-          )}
+          <img 
+            src={IMAGES.campaignHeader} 
+            alt="A HUAT THING" 
+            className="w-full max-w-[180px] sm:max-w-[240px] md:max-w-[300px] lg:max-w-[380px] h-auto drop-shadow-2xl filter brightness-110"
+            loading="eager"
+          />
           
           <div className="max-w-2xl w-full flex flex-col items-center space-y-2">
             {/* Copy */}
@@ -98,10 +109,15 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
             
             {/* Major Rewards Display - BIGGER and Visible */}
             <div className="w-full pt-2 sm:pt-4 flex justify-center overflow-visible pb-2 sm:pb-4 lg:pb-8">
-               <div className="flex flex-row justify-center items-center gap-2 sm:gap-3">
-                  <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">🎁</div>
-                  <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">💰</div>
-                  <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">🧧</div>
+               <div className="flex flex-row justify-center items-end -space-x-2 sm:-space-x-4 md:-space-x-6 lg:-space-x-8">
+                  {MAJOR_REWARDS.map((reward, idx) => (
+                    <div key={idx} className="relative group transition-all duration-200 hover:-translate-y-3 hover:z-50 hover:scale-105 z-10">
+                        <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-48 lg:h-48 drop-shadow-[0_8px_8px_rgba(0,0,0,0.4)] sm:drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] filter brightness-110">
+                            <img src={reward.img} alt={reward.label} className="w-full h-full object-contain" loading="lazy" />
+                        </div>
+                        <div className="absolute inset-0 bg-yellow-400/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                  ))}
                </div>
             </div>
           </div>

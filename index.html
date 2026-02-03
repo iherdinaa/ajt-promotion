@@ -12,15 +12,9 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://files.ajt.my">
-    <link rel="dns-prefetch" href="https://s3-ap-southeast-1.amazonaws.com">
-    
-    <!-- Preload critical images for instant display -->
-    <link rel="preload" as="image" href="https://files.ajt.my/images/marketing-campaign/image-9a88ccbd-3a44-48c0-abee-6b41a12e9067.png">
-    <link rel="preload" as="image" href="https://files.ajt.my/images/marketing-campaign/image-7b154b42-e299-4c78-916a-0c4e29d0a650.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -34,8 +28,11 @@
             -moz-osx-font-smoothing: grayscale;
         }
         .festive-bg {
-            background: linear-gradient(135deg, #D40000 0%, #B30000 50%, #D40000 100%);
-            position: relative;
+            background-color: #D40000;
+            background-image: url('https://s3-ap-southeast-1.amazonaws.com/ricebowl/images/marketing-campaign/image-f42cc28f-4888-42f5-83d9-593d5778de49.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         .central-glow {
             background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
@@ -46,6 +43,7 @@
         }
         .float-animation {
             animation: float 3s ease-in-out infinite;
+            will-change: transform;
         }
         @keyframes slide-up {
             from { transform: translateY(30px); opacity: 0; }
@@ -96,7 +94,20 @@
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <!-- Preloader while app loads -->
+        <div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #D40000; z-index: 9999;">
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; border: 4px solid #FFD700; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                <p style="color: #FFD700; font-weight: 900; font-size: 24px; font-family: 'Montserrat', sans-serif;">Loading Huat...</p>
+            </div>
+        </div>
+        <style>
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    </div>
 <script type="module" src="/index.tsx"></script>
 </body>
 </html>
