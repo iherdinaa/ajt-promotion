@@ -15,13 +15,38 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
     countryCode: '🇲🇾 (+60)',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage('');
+    
     if (formData.companyName && formData.email && formData.phone && !isSubmitting) {
       setIsSubmitting(true);
       try {
+        // Check if user already played
+        const phone = formData.countryCode.match(/\+\d+/)?.[0] + formData.phone || formData.phone;
+        const checkResponse = await fetch('/api/check-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            email: formData.email, 
+            phone: phone 
+          }),
+        });
+        
+        const checkData = await checkResponse.json();
+        
+        if (checkData.exists) {
+          setErrorMessage('This email and phone number have already been used. You can only play once!');
+          setIsSubmitting(false);
+          return;
+        }
+        
         await onStart(formData);
+      } catch (error) {
+        console.error('[v0] Error checking user:', error);
+        setErrorMessage('Error checking entry. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
@@ -196,6 +221,13 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
                 />
               </div>
             </div>
+
+            {errorMessage && (
+              <div className="w-full bg-red-100 border-2 border-red-500 text-red-700 px-4 py-3 rounded-xl mt-2 sm:mt-3 text-sm sm:text-base font-bold text-center">
+                <i className="fa-solid fa-exclamation-triangle mr-2"></i>
+                {errorMessage}
+              </div>
+            )}
 
             <button 
               type="submit"
