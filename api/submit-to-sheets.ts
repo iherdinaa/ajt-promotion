@@ -69,9 +69,70 @@ async function getAccessToken(): Promise<string> {
   return tokenData.access_token;
 }
 
-// Append row to Google Sheet
+// Find row by email AND phone number to prevent duplicates
+async function findRowByEmailAndPhone(accessToken: string, email: string, phone: string): Promise<number | null> {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:X`;
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+  const rows = data.values || [];
+  
+  // Find row with matching email AND phone number
+  // email is column E (index 4), phone is column F (index 5)
+  console.log('[v0] Searching for email:', email, 'phone:', phone);
+  console.log('[v0] Total rows to search:', rows.length);
+  
+  for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
+    const rowEmail = (rows[i][4] || '').trim(); // Column E
+    const rowPhone = (rows[i][5] || '').trim(); // Column F
+    
+    console.log(`[v0] Row ${i + 1}: email="${rowEmail}" phone="${rowPhone}"`);
+    
+    if (rowEmail === email.trim() && rowPhone === phone.trim()) {
+      console.log('[v0] MATCH FOUND at row:', i + 1);
+      return i + 1; // Return 1-indexed row number
+    }
+  }
+  
+  console.log('[v0] No matching row found');
+  
+  return null;
+}
+
+// Update existing row
+async function updateRow(accessToken: string, rowNumber: number, rowData: string[]): Promise<void> {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:X${rowNumber}?valueInputOption=USER_ENTERED`;
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      values: [rowData],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to update row: ${errorText}`);
+  }
+}
+
+// Append new row to Google Sheet
 async function appendToSheet(accessToken: string, rowData: string[]): Promise<void> {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:R:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:X:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -128,34 +189,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const accessToken = await getAccessToken();
     console.log('[v0] Got access token');
 
-    // Prepare row data matching the headers
-    // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, referral_name, referral_company, referral_email, referral_phone, referral_position, utm_source, utm_medium, utm_campaign
+    // Prepare row data matching the headers (A-X)
+    // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, 
+    //          click_share_linkedin, click_share_whatsapp, click_tngo, click_more_huat, click_register, click_login,
+    //          referral_name, referral_phone, referral_position, referral_email, referral_companyname, 
+    //          utm_source, utm_medium, utm_campaign
     const rowData = [
-      data.timestamp || new Date().toISOString(),
-      data.action || '',
-      data.entry_point || '',
-      data.company_name || '',
-      data.email || '',
-      data.phone_number || '',
-      data.survey_q1 || '',
-      data.survey_q2 || '',
-      data.survey_q3 || '',
-      data.gift || '',
-      data.referral_name || '',
-      data.referral_company || '',
-      data.referral_email || '',
-      data.referral_phone || '',
-      data.referral_position || '',
-      data.utm_source || '',
-      data.utm_medium || '',
-      data.utm_campaign || '',
+      data.timestamp || new Date().toISOString(),               // A: timestamp
+      data.action || '',                                         // B: action
+      data.entry_point || '',                                    // C: entry_point
+      data.company_name || '',                                   // D: company_name
+      data.email || '',                                          // E: email (unique key 1)
+      data.phone_number || '',                                   // F: phone_number (unique key 2)
+      data.survey_q1 || '',                                      // G: survey_q1
+      data.survey_q2 || '',                                      // H: survey_q2
+      data.survey_q3 || '',                                      // I: survey_q3
+      data.gift || '',                                           // J: gift
+      data.click_share_linkedin || 'no',                         // K: click_share_linkedin
+      data.click_share_whatsapp || 'no',                         // L: click_share_whatsapp
+      data.click_tngo || 'no',                                   // M: click_tngo
+      data.click_more_huat || 'no',                              // N: click_more_huat
+      data.click_register || 'no',                               // O: click_register
+      data.click_login || 'no',                                  // P: click_login
+      data.referral_name || '',                                  // Q: referral_name
+      data.referral_phone || '',                                 // R: referral_phone
+      data.referral_position || '',                              // S: referral_position
+      data.referral_email || '',                                 // T: referral_email
+      data.referral_companyname || '',                           // U: referral_companyname
+      data.utm_source || 'direct',                               // V: utm_source
+      data.utm_medium || 'direct',                               // W: utm_medium
+      data.utm_campaign || 'direct',                             // X: utm_campaign
     ];
     console.log('[v0] Row data prepared');
 
-    // Append to sheet
-    console.log('[v0] Appending to sheet...');
-    await appendToSheet(accessToken, rowData);
-    console.log('[v0] Successfully appended to sheet');
+    // Check if row exists for this email AND phone number
+    console.log('[v0] Checking for existing row by email and phone...');
+    const existingRow = await findRowByEmailAndPhone(accessToken, data.email, data.phone_number);
+    
+    if (existingRow) {
+      // Update existing row
+      console.log('[v0] Found existing row:', existingRow, '- Updating...');
+      await updateRow(accessToken, existingRow, rowData);
+      console.log('[v0] Successfully updated row');
+    } else {
+      // Append new row
+      console.log('[v0] No existing row found - Appending new row...');
+      await appendToSheet(accessToken, rowData);
+      console.log('[v0] Successfully appended to sheet');
+    }
 
     return res.status(200).json({ success: true });
   } catch (error) {
