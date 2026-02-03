@@ -1,4 +1,3 @@
-
 export interface UserData {
   companyName: string;
   email: string;

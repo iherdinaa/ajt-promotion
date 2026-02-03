@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { QuizData, ReferralData } from '../types';
 import { REWARD_IMAGES } from '../constants';
@@ -371,7 +370,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                  <div className="w-full max-w-[200px] sm:max-w-xs md:max-w-sm mb-4 sm:mb-6 md:mb-8 relative group">
                     <div className="absolute inset-0 bg-yellow-400/30 blur-xl sm:blur-2xl rounded-full animate-pulse"></div>
                     <img 
-                        src="https://files.ajt.my/images/marketing-campaign/image-410dff8d-530c-4496-9e94-58d9aa3d8a54.png" 
+                        src="/images/design-mode/image-410dff8d-530c-4496-9e94-58d9aa3d8a54.png" 
                         alt="Internship Reward" 
                         className="relative z-10 w-full h-auto object-contain drop-shadow-2xl transform group-hover:scale-105 transition-transform duration-500"
                     />

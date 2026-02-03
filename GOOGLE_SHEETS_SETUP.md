@@ -18,7 +18,7 @@ Your Google Sheet should have the following columns in the first row (headers):
 
 3. Delete any existing code and paste the following:
 
-```javascript
+\`\`\`javascript
 // Google Apps Script - Web App for receiving form submissions
 // Handles GET requests with URL parameters (works better with CORS)
 
@@ -155,7 +155,7 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
-```
+\`\`\`
 
 4. Click **Save** (Ctrl+S or Cmd+S)
 
@@ -180,9 +180,9 @@ function doPost(e) {
 
 Add the following environment variable to your Vercel project:
 
-```
+\`\`\`
 VITE_GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
-```
+\`\`\`
 
 Replace `YOUR_DEPLOYMENT_ID` with your actual deployment ID from Step 2.
 

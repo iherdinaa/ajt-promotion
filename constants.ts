@@ -1,4 +1,3 @@
-
 import { Prize } from './types';
 
 export const COLORS = {

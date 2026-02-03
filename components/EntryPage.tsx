@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserData } from '../types';
 import { IMAGES, MAJOR_REWARDS, FLOATING_VOUCHERS, RM2888_VOUCHER } from '../constants';
