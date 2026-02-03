@@ -1,23 +1,63 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID || '';
-const SHEET_NAME = process.env.SHEET_NAME || 'Sheet1';
+const SPREADSHEET_ID = '1kppk_NJn7U3xdj1yYGPPsGiHS1LXCVTv7HldkyJbHlo';
+const SHEET_NAME = 'Ahuathing';
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
-// Get OAuth2 access token
+// Get OAuth2 access token using JWT
 async function getAccessToken(): Promise<string> {
-  const jwtClient = require('google-auth-library').JWT;
-  
-  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
-  const client = new jwtClient({
-    email,
-    key,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  if (!clientEmail || !privateKey) {
+    throw new Error('Missing Google credentials');
+  }
+
+  // Create JWT header and claim
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT',
+  };
+
+  const now = Math.floor(Date.now() / 1000);
+  const claim = {
+    iss: clientEmail,
+    scope: SCOPES.join(' '),
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  };
+
+  // Base64url encode
+  const base64urlEncode = (obj: object) => {
+    const str = JSON.stringify(obj);
+    const base64 = Buffer.from(str).toString('base64');
+    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  };
+
+  const headerEncoded = base64urlEncode(header);
+  const claimEncoded = base64urlEncode(claim);
+  const signatureInput = `${headerEncoded}.${claimEncoded}`;
+
+  // Sign with private key
+  const crypto = await import('crypto');
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.update(signatureInput);
+  const signature = sign.sign(privateKey, 'base64');
+  const signatureEncoded = signature.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+  const jwt = `${signatureInput}.${signatureEncoded}`;
+
+  // Exchange JWT for access token
+  const response = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
   });
 
-  const tokens = await client.authorize();
-  return tokens.access_token;
+  const data = await response.json();
+  return data.access_token;
+}
 }
 
 // Check if user already exists by email AND phone
