@@ -109,13 +109,13 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 text-center overflow-y-auto">
+    <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-3 md:p-4 text-center overflow-hidden">
       {/* Responsive container */}
-      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-5 md:p-7 lg:p-9 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-6 sm:my-8 max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto">
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-3 sm:p-4 md:p-5 lg:p-6 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-3 sm:my-4 max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
-            <div className="w-full mb-3 sm:mb-4 md:mb-5 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 md:border-4 border-yellow-400 shadow-2xl">
+            <div className="w-full mb-2 sm:mb-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 md:border-4 border-yellow-400 shadow-2xl">
                 <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight italic uppercase tracking-tight mb-2 drop-shadow-lg">
                     🎉 CONGRATS, YOU WON! 🎉
                 </h2>
@@ -123,7 +123,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
             
             {/* Rewards Container */}
-            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-5 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
                 
                 {/* Main Voucher - Shows if within campaign date */}
                 {showStandardPrizes && (
@@ -171,7 +171,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
 
             {/* Additional Text Info */}
-            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 md:mb-8 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
+            <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
                 {showLunch && (
                     <>
                         <p className="font-bold text-gray-800 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
@@ -193,8 +193,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
 
             {/* Share Section */}
-            <div className="w-full mb-3 sm:mb-4 md:mb-5">
-                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2 sm:mb-3">
+            <div className="w-full mb-2 sm:mb-3">
+                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2">
                     <div className="h-px bg-gray-200 flex-1"></div>
                     <p className="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-wide sm:tracking-widest whitespace-nowrap">Share the Prosperity</p>
                     <div className="h-px bg-gray-200 flex-1"></div>
@@ -245,8 +245,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
 
         {step === 'REFERRAL' && (
             <div className="animate-in fade-in slide-in-from-right duration-500 w-full text-left max-w-3xl mx-auto">
-                <div className="text-center mb-4 sm:mb-6 md:mb-8">
-                    <div className="inline-block bg-red-100 text-red-600 rounded-full p-2 sm:p-3 md:p-4 mb-2 sm:mb-4">
+                <div className="text-center mb-3 sm:mb-4">
+                    <div className="inline-block bg-red-100 text-red-600 rounded-full p-2 sm:p-3 md:p-4 mb-2 sm:mb-3">
                         <i className="fa-solid fa-users-viewfinder text-xl sm:text-3xl md:text-4xl"></i>
                     </div>
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-gray-800 uppercase tracking-tight mb-1 sm:mb-2">Refer a HR Friend</h2>
@@ -255,8 +255,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                     </p>
                 </div>
 
-                <form onSubmit={handleReferralSubmit} className="space-y-3 sm:space-y-4 md:space-y-6 bg-gray-50 p-3 sm:p-5 md:p-8 rounded-xl sm:rounded-2xl md:rounded-3xl border border-gray-100 shadow-inner">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                <form onSubmit={handleReferralSubmit} className="space-y-3 sm:space-y-4 bg-gray-50 p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl border border-gray-100 shadow-inner">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {/* Name Field */}
                         <div className="relative group">
                             <label className="block text-[10px] sm:text-xs font-black text-gray-500 uppercase mb-1 sm:mb-2 ml-1">Friend's Name</label>
