@@ -111,7 +111,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 text-center overflow-y-auto">
       {/* Responsive container */}
-      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-5 md:p-7 lg:p-9 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-4 sm:my-6 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto">
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-5 md:p-7 lg:p-9 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-6 sm:my-8 max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
