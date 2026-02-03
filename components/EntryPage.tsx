@@ -118,6 +118,18 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16 overflow-y-auto overflow-x-hidden py-2 sm:py-4">
       
+      {/* Live Report Notification - Top Center */}
+      <div className="absolute top-3 sm:top-4 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none">
+        <div className="bg-red-600/85 backdrop-blur-sm border-2 border-yellow-400/70 rounded-lg shadow-lg px-3 py-1.5 sm:px-4 sm:py-2 animate-in fade-in zoom-in duration-500" key={currentCompany}>
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-300 text-sm animate-pulse">🧧</span>
+            <div className="text-white font-bold text-[10px] sm:text-xs whitespace-nowrap">
+              <span className="text-yellow-300">{companies[currentCompany]}</span> opened!
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Scattered Floating Vouchers - Visible Layer */}
       {/* Reduced for better performance on all devices */}
       <div className="absolute inset-0 pointer-events-none overflow-visible z-0">
@@ -153,18 +165,6 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
             loading="eager"
           />
           
-          {/* Live Report Notification - Below Logo */}
-          <div className="pointer-events-none mb-1">
-            <div className="bg-red-600/85 backdrop-blur-sm border-2 border-yellow-400/70 rounded-lg shadow-lg px-3 py-1.5 sm:px-4 sm:py-2 animate-in fade-in zoom-in duration-500" key={currentCompany}>
-              <div className="flex items-center gap-2">
-                <span className="text-yellow-300 text-sm animate-pulse">🧧</span>
-                <div className="text-white font-bold text-[10px] sm:text-xs whitespace-nowrap">
-                  <span className="text-yellow-300">{companies[currentCompany]}</span> opened!
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="max-w-2xl w-full flex flex-col items-center space-y-2">
             {/* Copy */}
             <div className="relative p-1 mx-auto">
