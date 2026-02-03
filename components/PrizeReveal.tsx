@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { QuizData, ReferralData } from '../types';
 import { REWARD_IMAGES } from '../constants';
 
@@ -388,12 +388,11 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                     <span className="text-yellow-600 bg-yellow-50 px-1 sm:px-2 rounded-md sm:rounded-lg text-base sm:text-lg md:text-xl">1 Free Internship Job Ad!</span>
                  </h2>
                  
-                 <div className="w-full max-w-[140px] sm:max-w-[180px] md:max-w-[220px] mb-2 sm:mb-3 md:mb-4 relative group">
-                    <div className="absolute inset-0 bg-yellow-400/30 blur-lg sm:blur-xl rounded-full animate-pulse"></div>
+                 <div className="w-full max-w-[140px] sm:max-w-[180px] md:max-w-[220px] mb-2 sm:mb-3 md:mb-4">
                     <img 
                         src="https://files.ajt.my/images/marketing-campaign/image-410dff8d-530c-4496-9e94-58d9aa3d8a54.png" 
                         alt="Internship Reward" 
-                        className="relative z-10 w-full h-auto object-contain drop-shadow-xl transform group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-auto object-contain drop-shadow-xl"
                         loading="eager"
                     />
                  </div>

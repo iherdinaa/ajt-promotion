@@ -89,22 +89,14 @@ async function findRowByEmailAndPhone(accessToken: string, email: string, phone:
   
   // Find row with matching email AND phone number
   // email is column E (index 4), phone is column F (index 5)
-  console.log('[v0] Searching for email:', email, 'phone:', phone);
-  console.log('[v0] Total rows to search:', rows.length);
-  
   for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
     const rowEmail = (rows[i][4] || '').trim(); // Column E
     const rowPhone = (rows[i][5] || '').trim(); // Column F
     
-    console.log(`[v0] Row ${i + 1}: email="${rowEmail}" phone="${rowPhone}"`);
-    
     if (rowEmail === email.trim() && rowPhone === phone.trim()) {
-      console.log('[v0] MATCH FOUND at row:', i + 1);
       return i + 1; // Return 1-indexed row number
     }
   }
-  
-  console.log('[v0] No matching row found');
   
   return null;
 }
@@ -165,29 +157,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  console.log('[v0] API route called');
-
   try {
     const data = req.body;
-    console.log('[v0] Received data:', JSON.stringify(data));
 
-    // Check environment variables
-    const hasEmail = !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    const hasKey = !!process.env.GOOGLE_PRIVATE_KEY;
-    console.log('[v0] Has service account email:', hasEmail);
-    console.log('[v0] Has private key:', hasKey);
-
-    if (!hasEmail || !hasKey) {
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
       return res.status(500).json({
         success: false,
-        error: 'Missing Google credentials. Please set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY environment variables.',
+        error: 'Missing Google credentials',
       });
     }
 
-    // Get access token
-    console.log('[v0] Getting access token...');
     const accessToken = await getAccessToken();
-    console.log('[v0] Got access token');
 
     // Prepare row data matching the headers (A-X)
     // Headers: timestamp, action, entry_point, company_name, email, phone_number, survey_q1, survey_q2, survey_q3, gift, 
@@ -220,27 +200,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       data.utm_medium || 'direct',                               // W: utm_medium
       data.utm_campaign || 'direct',                             // X: utm_campaign
     ];
-    console.log('[v0] Row data prepared');
 
     // Check if row exists for this email AND phone number
-    console.log('[v0] Checking for existing row by email and phone...');
     const existingRow = await findRowByEmailAndPhone(accessToken, data.email, data.phone_number);
     
     if (existingRow) {
-      // Update existing row
-      console.log('[v0] Found existing row:', existingRow, '- Updating...');
       await updateRow(accessToken, existingRow, rowData);
-      console.log('[v0] Successfully updated row');
     } else {
-      // Append new row
-      console.log('[v0] No existing row found - Appending new row...');
       await appendToSheet(accessToken, rowData);
-      console.log('[v0] Successfully appended to sheet');
     }
 
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error('[v0] Error submitting to Google Sheets:', error);
     return res.status(500).json({
       success: false,
       error: String(error),

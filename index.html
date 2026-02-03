@@ -12,9 +12,15 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://files.ajt.my">
+    <link rel="dns-prefetch" href="https://s3-ap-southeast-1.amazonaws.com">
+    
+    <!-- Preload critical images for instant display -->
+    <link rel="preload" as="image" href="https://files.ajt.my/images/marketing-campaign/image-9a88ccbd-3a44-48c0-abee-6b41a12e9067.png">
+    <link rel="preload" as="image" href="https://files.ajt.my/images/marketing-campaign/image-7b154b42-e299-4c78-916a-0c4e29d0a650.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -29,10 +35,6 @@
         }
         .festive-bg {
             background-color: #D40000;
-            background-image: url('https://s3-ap-southeast-1.amazonaws.com/ricebowl/images/marketing-campaign/image-f42cc28f-4888-42f5-83d9-593d5778de49.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
         }
         .central-glow {
             background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
@@ -43,7 +45,6 @@
         }
         .float-animation {
             animation: float 3s ease-in-out infinite;
-            will-change: transform;
         }
         @keyframes slide-up {
             from { transform: translateY(30px); opacity: 0; }
