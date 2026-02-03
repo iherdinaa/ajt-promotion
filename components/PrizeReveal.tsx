@@ -106,9 +106,9 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 md:p-6 text-center overflow-y-auto">
+    <div className="w-full h-full flex flex-col items-center justify-start sm:justify-center p-2 sm:p-3 md:p-4 lg:p-6 text-center overflow-y-auto">
       {/* Responsive container */}
-      <div className="max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-3 sm:p-5 md:p-8 shadow-[0_0_40px_rgba(234,179,8,0.3)] sm:shadow-[0_0_80px_rgba(234,179,8,0.4)] relative border-[4px] sm:border-[6px] md:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col justify-start sm:justify-center my-2 sm:my-auto min-h-0 sm:min-h-[60vh]">
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-3 sm:p-4 md:p-6 lg:p-8 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col justify-start sm:justify-center my-2 sm:my-auto min-h-0 sm:min-h-[60vh]">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
@@ -129,7 +129,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                       <img 
                           src={rewardData.image} 
                           alt="Voucher" 
-                          className="w-full h-auto rounded-md sm:rounded-lg max-h-32 sm:max-h-44 md:max-h-56 object-contain group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-auto rounded-md sm:rounded-lg max-h-32 sm:max-h-44 md:max-h-56 object-contain group-hover:scale-105 transition-transform duration-200"
+                          loading="eager"
                       />
                   </div>
                 )}
@@ -148,6 +149,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                             src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
                             alt="TnG" 
                             className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
+                            loading="lazy"
                         />
                         <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
                             Tap to Reveal Code
@@ -159,7 +161,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                  {showStandardPrizes && rewardData.hasBillboard && (
                      <div className="bg-yellow-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-yellow-200 shadow-lg flex flex-col items-center justify-between relative hover:bg-yellow-100 transition-colors h-full min-h-[10rem] sm:min-h-[14rem] md:min-h-[16rem]">
                         <span className="text-[10px] sm:text-xs font-black text-yellow-600 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full whitespace-nowrap">A Chance to Get</span>
-                        <img src={REWARD_IMAGES.billboard} alt="Billboard" className="w-full h-20 sm:h-28 md:h-32 object-contain my-1 sm:my-2" />
+                        <img src={REWARD_IMAGES.billboard} alt="Billboard" className="w-full h-20 sm:h-28 md:h-32 object-contain my-1 sm:my-2" loading="lazy" />
                         <span className="text-xs sm:text-sm font-bold text-center leading-tight text-yellow-800">Free Billboard Ad* worth RM5,000</span>
                      </div>
                  )}

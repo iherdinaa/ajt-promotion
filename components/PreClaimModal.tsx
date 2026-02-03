@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { QuizData } from '../types';
 
 interface PreClaimModalProps {
-  onSubmit: (data: QuizData) => void;
+  onSubmit: (data: QuizData) => Promise<void>;
 }
 
 const PreClaimModal: React.FC<PreClaimModalProps> = ({ onSubmit }) => {
@@ -12,6 +12,7 @@ const PreClaimModal: React.FC<PreClaimModalProps> = ({ onSubmit }) => {
     hiringPlan: '',
     headcount: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isComplete = formData.resignationFrequency && formData.hiringPlan && formData.headcount;
 
@@ -127,15 +128,28 @@ const PreClaimModal: React.FC<PreClaimModalProps> = ({ onSubmit }) => {
         </div>
 
         <button
-          disabled={!isComplete}
-          onClick={() => onSubmit(formData)}
+          disabled={!isComplete || isSubmitting}
+          onClick={async () => {
+            if (isComplete && !isSubmitting) {
+              setIsSubmitting(true);
+              try {
+                await onSubmit(formData);
+              } finally {
+                setIsSubmitting(false);
+              }
+            }
+          }}
           className={`w-full py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl font-black text-base sm:text-xl md:text-2xl shadow-xl transform active:scale-[0.98] transition-all uppercase tracking-wide sm:tracking-widest border-b-2 sm:border-b-4
-            ${isComplete 
+            ${isComplete && !isSubmitting
               ? 'bg-gradient-to-r from-red-600 via-red-700 to-red-900 text-white border-red-900 hover:brightness-110 cursor-pointer animate-pulse' 
               : 'bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed shadow-none'}
           `}
         >
-          REVEAL REWARD <i className="fa-solid fa-bolt ml-1 sm:ml-2 text-yellow-300 text-sm sm:text-base"></i>
+          {isSubmitting ? (
+            <>LOADING... <i className="fa-solid fa-spinner fa-spin ml-1 sm:ml-2 text-yellow-300 text-sm sm:text-base"></i></>
+          ) : (
+            <>REVEAL REWARD <i className="fa-solid fa-bolt ml-1 sm:ml-2 text-yellow-300 text-sm sm:text-base"></i></>
+          )}
         </button>
       </div>
     </div>

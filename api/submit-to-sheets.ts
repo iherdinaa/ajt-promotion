@@ -69,7 +69,56 @@ async function getAccessToken(): Promise<string> {
   return tokenData.access_token;
 }
 
-// Append row to Google Sheet
+// Find row by email
+async function findRowByEmail(accessToken: string, email: string): Promise<number | null> {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:R`;
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+  const rows = data.values || [];
+  
+  // Find row with matching email (email is column 5, index 4)
+  for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
+    if (rows[i][4] === email) {
+      return i + 1; // Return 1-indexed row number
+    }
+  }
+  
+  return null;
+}
+
+// Update existing row
+async function updateRow(accessToken: string, rowNumber: number, rowData: string[]): Promise<void> {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:R${rowNumber}?valueInputOption=USER_ENTERED`;
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      values: [rowData],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to update row: ${errorText}`);
+  }
+}
+
+// Append new row to Google Sheet
 async function appendToSheet(accessToken: string, rowData: string[]): Promise<void> {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:R:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
@@ -152,10 +201,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ];
     console.log('[v0] Row data prepared');
 
-    // Append to sheet
-    console.log('[v0] Appending to sheet...');
-    await appendToSheet(accessToken, rowData);
-    console.log('[v0] Successfully appended to sheet');
+    // Check if row exists for this email
+    console.log('[v0] Checking for existing row...');
+    const existingRow = await findRowByEmail(accessToken, data.email);
+    
+    if (existingRow) {
+      // Update existing row
+      console.log('[v0] Updating existing row:', existingRow);
+      await updateRow(accessToken, existingRow, rowData);
+      console.log('[v0] Successfully updated row');
+    } else {
+      // Append new row
+      console.log('[v0] Appending new row...');
+      await appendToSheet(accessToken, rowData);
+      console.log('[v0] Successfully appended to sheet');
+    }
 
     return res.status(200).json({ success: true });
   } catch (error) {
