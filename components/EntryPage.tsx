@@ -16,6 +16,39 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [currentCompany, setCurrentCompany] = useState(0);
+
+  // Live report company names with masking
+  const companies = [
+    "Agen** Jas***** Sdn Bhd",
+    "Tech*** Inno******* Solutions",
+    "Golden Dra*** Holdings",
+    "Mala**** Energ* Corp",
+    "Star** Ventures Pte Ltd",
+    "Paci*** Trading Co",
+    "Brig** Logistics Sdn Bhd",
+    "Prop***** Consulting",
+    "Urban Dev******** Group",
+    "Suns*** Resources",
+    "Excel*** Manufacturing",
+    "Digi*** Transform****",
+    "Asia* Connect Sdn Bhd",
+    "Green For**** Industries",
+    "Smart Cit* Solutions",
+    "Mega Ret*** Chain",
+    "Premi** Healthcare",
+    "Innov**** Tech Hub",
+    "Glob** Shipping Ltd",
+    "Future Fi***** Group"
+  ];
+
+  // Rotate companies every 3 seconds
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentCompany((prev) => (prev + 1) % companies.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +71,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
         const checkData = await checkResponse.json();
         
         if (checkData.exists) {
-          setErrorMessage('This email and phone number have already been used. You can only play once!');
+          setErrorMessage("You've already opened your angpau!");
           setIsSubmitting(false);
           return;
         }
@@ -85,6 +118,24 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16 overflow-y-auto overflow-x-hidden py-2 sm:py-4">
       
+      {/* Live Report Ticker - Chinese Vibes */}
+      <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none">
+        <div className="bg-gradient-to-r from-red-600 via-red-700 to-red-600 border-b-4 border-yellow-500 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+          <div className="max-w-7xl mx-auto px-4 py-2 sm:py-3 flex items-center justify-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              <span className="text-yellow-300 text-lg sm:text-xl animate-pulse">🧧</span>
+              <span className="text-yellow-300 font-black text-xs sm:text-sm uppercase tracking-wider">LIVE</span>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <div className="text-white font-bold text-xs sm:text-sm md:text-base text-center animate-in fade-in zoom-in duration-500" key={currentCompany}>
+                <span className="text-yellow-300">{companies[currentCompany]}</span> opened their angpau!
+              </div>
+            </div>
+            <span className="text-yellow-300 text-lg sm:text-xl animate-pulse flex-shrink-0">🎉</span>
+          </div>
+        </div>
+      </div>
+
       {/* Scattered Floating Vouchers - Visible Layer */}
       {/* Reduced for better performance on all devices */}
       <div className="absolute inset-0 pointer-events-none overflow-visible z-0">
@@ -109,7 +160,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
       <div className="absolute inset-0 central-glow pointer-events-none z-[-1]"></div>
       
       {/* Main Container - Left Title, Right Form */}
-      <div className="w-full max-w-[1200px] xl:max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8 xl:gap-12 z-10 relative">
+      <div className="w-full max-w-[1200px] xl:max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8 xl:gap-12 z-10 relative mt-12 sm:mt-14">
         
         {/* Left Column: Huge Title & Copy & Major Rewards */}
         <div className="w-full lg:w-3/5 flex flex-col items-center text-center animate-slide-up space-y-1 relative">
