@@ -109,21 +109,21 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-start sm:justify-center p-2 sm:p-3 md:p-4 lg:p-6 text-center overflow-y-auto">
+    <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 text-center overflow-y-auto">
       {/* Responsive container */}
-      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-3 sm:p-4 md:p-6 lg:p-8 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col justify-start sm:justify-center my-2 sm:my-auto min-h-0 sm:min-h-[60vh]">
+      <div className="max-w-4xl lg:max-w-5xl w-full bg-white rounded-[1.25rem] sm:rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-5 md:p-7 lg:p-9 shadow-[0_0_30px_rgba(234,179,8,0.25)] sm:shadow-[0_0_60px_rgba(234,179,8,0.35)] relative border-[4px] sm:border-[5px] md:border-[7px] lg:border-[10px] border-yellow-500 animate-scale-bounce solid-shadow flex flex-col my-4 sm:my-6 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto">
         
         {step === 'REVEAL' && (
           <div className="animate-in fade-in zoom-in duration-700 flex flex-col items-center w-full">
-            <div className="w-full mb-3 sm:mb-4 md:mb-6 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-4 sm:py-5 md:py-6 px-4 sm:px-5 rounded-xl sm:rounded-2xl border-3 sm:border-4 border-yellow-400 shadow-2xl">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight italic uppercase tracking-tight mb-2 sm:mb-3 drop-shadow-lg">
+            <div className="w-full mb-3 sm:mb-4 md:mb-5 bg-gradient-to-br from-red-600 via-red-700 to-red-800 py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-5 rounded-xl sm:rounded-2xl border-2 sm:border-3 md:border-4 border-yellow-400 shadow-2xl">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight italic uppercase tracking-tight mb-2 drop-shadow-lg">
                     🎉 CONGRATS, YOU WON! 🎉
                 </h2>
-                <div className="w-24 sm:w-32 md:w-40 h-1.5 sm:h-2 md:h-2.5 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 mx-auto rounded-full shadow-lg"></div>
+                <div className="w-20 sm:w-28 md:w-36 h-1 sm:h-1.5 md:h-2 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300 mx-auto rounded-full shadow-lg"></div>
             </div>
             
             {/* Rewards Container */}
-            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-8 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+            <div className="w-full grid gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-5 items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
                 
                 {/* Main Voucher - Shows if within campaign date */}
                 {showStandardPrizes && (
@@ -193,25 +193,25 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             </div>
 
             {/* Share Section */}
-            <div className="w-full mb-4 sm:mb-6 md:mb-8">
-                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2 sm:mb-4">
+            <div className="w-full mb-3 sm:mb-4 md:mb-5">
+                <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2 sm:mb-3">
                     <div className="h-px bg-gray-200 flex-1"></div>
                     <p className="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-wide sm:tracking-widest whitespace-nowrap">Share the Prosperity</p>
                     <div className="h-px bg-gray-200 flex-1"></div>
                 </div>
-                <div className="flex gap-2 sm:gap-4 justify-center">
-                    <button onClick={() => handleShare('whatsapp')} className="flex items-center gap-1.5 sm:gap-3 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-whatsapp text-base sm:text-xl md:text-2xl"></i> 
-                        <span className="text-xs sm:text-base md:text-lg">WhatsApp</span>
+                <div className="flex gap-2 sm:gap-3 justify-center">
+                    <button onClick={() => handleShare('whatsapp')} className="flex items-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
+                        <i className="fa-brands fa-whatsapp text-base sm:text-lg md:text-xl"></i> 
+                        <span className="text-xs sm:text-sm md:text-base">WhatsApp</span>
                     </button>
-                    <button onClick={() => handleShare('linkedin')} className="flex items-center gap-1.5 sm:gap-3 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-linkedin text-base sm:text-xl md:text-2xl"></i> 
-                        <span className="text-xs sm:text-base md:text-lg">LinkedIn</span>
+                    <button onClick={() => handleShare('linkedin')} className="flex items-center gap-1.5 sm:gap-2 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
+                        <i className="fa-brands fa-linkedin text-base sm:text-lg md:text-xl"></i> 
+                        <span className="text-xs sm:text-sm md:text-base">LinkedIn</span>
                     </button>
                 </div>
             </div>
 
-            <div className="w-full max-w-xl mx-auto">
+            <div className="w-full max-w-xl mx-auto mt-2 sm:mt-3">
                <button 
                 onClick={async () => {
                   if (!isLoadingMoreHuat) {
@@ -225,17 +225,17 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                   }
                 }}
                 disabled={isLoadingMoreHuat}
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-xl md:text-2xl py-4 sm:py-5 md:py-6 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[4px] sm:border-b-[5px] md:border-b-[6px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[5px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
                >
                  {isLoadingMoreHuat ? (
                    <>
                      <span>LOADING...</span>
-                     <i className="fa-solid fa-spinner fa-spin text-base sm:text-xl"></i>
+                     <i className="fa-solid fa-spinner fa-spin text-base sm:text-lg"></i>
                    </>
                  ) : (
                    <>
                      <span>WANT MORE HUAT?</span>
-                     <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-base sm:text-xl"></i>
+                     <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-base sm:text-lg"></i>
                    </>
                  )}
                </button>
