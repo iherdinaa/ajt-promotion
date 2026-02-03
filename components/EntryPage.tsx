@@ -118,20 +118,14 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16 overflow-y-auto overflow-x-hidden py-2 sm:py-4">
       
-      {/* Live Report Ticker - Chinese Vibes */}
-      <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none">
-        <div className="bg-gradient-to-r from-red-600 via-red-700 to-red-600 border-b-4 border-yellow-500 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-          <div className="max-w-7xl mx-auto px-4 py-2 sm:py-3 flex items-center justify-center gap-2 sm:gap-3">
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-              <span className="text-yellow-300 text-lg sm:text-xl animate-pulse">🧧</span>
-              <span className="text-yellow-300 font-black text-xs sm:text-sm uppercase tracking-wider">LIVE</span>
+      {/* Live Report Notification - Transparent Popup */}
+      <div className="absolute top-4 right-4 z-30 pointer-events-none">
+        <div className="bg-red-600/85 backdrop-blur-sm border-2 border-yellow-400/70 rounded-lg shadow-lg px-3 py-1.5 sm:px-4 sm:py-2 animate-in fade-in slide-in-from-right duration-500" key={currentCompany}>
+          <div className="flex items-center gap-2">
+            <span className="text-yellow-300 text-sm animate-pulse">🧧</span>
+            <div className="text-white font-bold text-[10px] sm:text-xs whitespace-nowrap">
+              <span className="text-yellow-300">{companies[currentCompany]}</span> opened!
             </div>
-            <div className="flex-1 overflow-hidden">
-              <div className="text-white font-bold text-xs sm:text-sm md:text-base text-center animate-in fade-in zoom-in duration-500" key={currentCompany}>
-                <span className="text-yellow-300">{companies[currentCompany]}</span> opened their angpau!
-              </div>
-            </div>
-            <span className="text-yellow-300 text-lg sm:text-xl animate-pulse flex-shrink-0">🎉</span>
           </div>
         </div>
       </div>
@@ -160,7 +154,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
       <div className="absolute inset-0 central-glow pointer-events-none z-[-1]"></div>
       
       {/* Main Container - Left Title, Right Form */}
-      <div className="w-full max-w-[1200px] xl:max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8 xl:gap-12 z-10 relative mt-12 sm:mt-14">
+      <div className="w-full max-w-[1200px] xl:max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8 xl:gap-12 z-10 relative">
         
         {/* Left Column: Huge Title & Copy & Major Rewards */}
         <div className="w-full lg:w-3/5 flex flex-col items-center text-center animate-slide-up space-y-1 relative">
