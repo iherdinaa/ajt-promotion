@@ -21,6 +21,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
   const [tngCountdown, setTngCountdown] = useState(8);
   const [isTngExpired, setIsTngExpired] = useState(false);
+  const [isTngLoading, setIsTngLoading] = useState(false);
   
   // Date Logic for Prizes
   const today = new Date();
@@ -158,28 +159,48 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                 {showTnG && (
                     <div 
                         onClick={async () => {
-                          await onTngoClick();
-                          setTngCountdown(8);
-                          setIsTngExpired(false);
-                          setIsTnGModalOpen(true);
+                          if (isTngLoading) return;
+                          setIsTngLoading(true);
+                          try {
+                            await onTngoClick();
+                            setTngCountdown(8);
+                            setIsTngExpired(false);
+                            setIsTnGModalOpen(true);
+                          } finally {
+                            setIsTngLoading(false);
+                          }
                         }}
                         className="cursor-pointer bg-blue-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-blue-200 shadow-lg flex flex-col items-center justify-center relative overflow-hidden transition-all active:scale-95 hover:bg-blue-100 group"
                     >
-                        <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
-                        <img 
-                            src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
-                            alt="TnG" 
-                            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
-                            loading="lazy"
-                        />
-                        <div className="flex flex-col gap-1">
-                          <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
-                              Tap to Reveal Code
-                          </span>
-                          <span className="text-[9px] sm:text-[10px] font-bold text-red-600 text-center leading-tight">
-                              8s to scan TnG credit
-                          </span>
-                        </div>
+                        {isTngLoading ? (
+                          <>
+                            <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center mb-2 sm:mb-3">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                            </div>
+                            <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                                Loading...
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
+                            <img 
+                                src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
+                                alt="TnG" 
+                                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
+                                loading="lazy"
+                            />
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                                  Tap to Reveal Code
+                              </span>
+                              <span className="text-[9px] sm:text-[10px] font-bold text-red-600 text-center leading-tight">
+                                  8s to scan TnG credit
+                              </span>
+                            </div>
+                          </>
+                        )}
                     </div>
                 )}
 
