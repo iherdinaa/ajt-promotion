@@ -172,9 +172,14 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                             className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
                             loading="lazy"
                         />
-                        <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
-                            Tap to Reveal Code
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                              Tap to Reveal Code
+                          </span>
+                          <span className="text-[9px] sm:text-[10px] font-bold text-red-600 text-center leading-tight">
+                              8s to scan TnG credit
+                          </span>
+                        </div>
                     </div>
                 )}
 
@@ -467,7 +472,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
       {/* TnG Modal */}
       {isTnGModalOpen && (
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[280px] sm:max-w-sm w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[320px] sm:max-w-md md:max-w-lg w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
                   <button 
                     onClick={() => setIsTnGModalOpen(false)}
                     className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-400 hover:text-gray-600 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -487,7 +492,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                           <img 
                             src="https://files.ajt.my/images/marketing-campaign/image-5f1b357e-6012-4168-9671-dc49d703dda2.jpg" 
                             alt="TnG QR" 
-                            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto object-contain mb-2 sm:mb-4"
+                            className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
                           />
                       </div>
                       
@@ -509,7 +514,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                       </div>
                       <h4 className="text-xl sm:text-2xl font-black text-red-600 uppercase mb-2 sm:mb-3">Expired</h4>
                       <p className="text-sm sm:text-base text-gray-500 font-medium">
-                          The QR code has expired. Please try again.
+                          The TnGo QR Scan has expired. Come back tomorrow for your angpau.
                       </p>
                     </div>
                   )}
