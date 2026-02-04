@@ -19,6 +19,9 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
+  const [tngCountdown, setTngCountdown] = useState(8);
+  const [isTngExpired, setIsTngExpired] = useState(false);
+  const [isTngLoading, setIsTngLoading] = useState(false);
   
   // Date Logic for Prizes
   const today = new Date();
@@ -47,6 +50,20 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingMoreHuat, setIsLoadingMoreHuat] = useState(false);
+
+  // TnG Countdown Timer
+  React.useEffect(() => {
+    if (isTnGModalOpen && !isTngExpired) {
+      if (tngCountdown > 0) {
+        const timer = setTimeout(() => {
+          setTngCountdown(prev => prev - 1);
+        }, 1000);
+        return () => clearTimeout(timer);
+      } else {
+        setIsTngExpired(true);
+      }
+    }
+  }, [isTnGModalOpen, tngCountdown, isTngExpired]);
 
   const jobPositions = [
     "Owner / Founder",
@@ -142,21 +159,48 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                 {showTnG && (
                     <div 
                         onClick={async () => {
-                          await onTngoClick();
-                          setIsTnGModalOpen(true);
+                          if (isTngLoading) return;
+                          setIsTngLoading(true);
+                          try {
+                            await onTngoClick();
+                            setTngCountdown(8);
+                            setIsTngExpired(false);
+                            setIsTnGModalOpen(true);
+                          } finally {
+                            setIsTngLoading(false);
+                          }
                         }}
                         className="cursor-pointer bg-blue-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-blue-200 shadow-lg flex flex-col items-center justify-center relative overflow-hidden transition-all active:scale-95 hover:bg-blue-100 group"
                     >
-                        <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
-                        <img 
-                            src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
-                            alt="TnG" 
-                            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
-                            loading="lazy"
-                        />
-                        <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
-                            Tap to Reveal Code
-                        </span>
+                        {isTngLoading ? (
+                          <>
+                            <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center mb-2 sm:mb-3">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                            </div>
+                            <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                                Loading...
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
+                            <img 
+                                src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
+                                alt="TnG" 
+                                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm group-hover:rotate-6 transition-transform"
+                                loading="lazy"
+                            />
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                                  Tap to Reveal Code
+                              </span>
+                              <span className="text-[9px] sm:text-[10px] font-bold text-red-600 text-center leading-tight">
+                                  8s to scan TnG credit
+                              </span>
+                            </div>
+                          </>
+                        )}
                     </div>
                 )}
 
@@ -449,7 +493,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
       {/* TnG Modal */}
       {isTnGModalOpen && (
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[280px] sm:max-w-sm w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
+              <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[320px] sm:max-w-md md:max-w-lg w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
                   <button 
                     onClick={() => setIsTnGModalOpen(false)}
                     className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-400 hover:text-gray-600 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -461,24 +505,40 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                       <i className="fa-solid fa-wallet"></i>
                   </div>
                   
-                  <h3 className="text-lg sm:text-2xl font-black text-blue-600 uppercase mb-3 sm:mb-6 tracking-tight">Your TnG Code</h3>
+                  <h3 className="text-lg sm:text-2xl font-black text-blue-600 uppercase mb-3 sm:mb-6 tracking-tight">Your TnG QR Scan</h3>
                   
-                  <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-6 border-2 border-blue-100 dashed-border">
-                      <img 
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TnGRedemptionCode123" 
-                        alt="TnG QR" 
-                        className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mix-blend-multiply mb-2 sm:mb-4"
-                      />
-                      <div className="bg-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-md sm:rounded-lg border border-blue-200">
-                          <p className="font-mono font-bold text-base sm:text-xl text-gray-800 tracking-wider sm:tracking-widest select-all">
-                              TNG-HUAT-888
-                          </p>
+                  {!isTngExpired ? (
+                    <>
+                      <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 border-2 border-blue-100">
+                          <img 
+                            src="https://files.ajt.my/images/marketing-campaign/image-5f1b357e-6012-4168-9671-dc49d703dda2.jpg" 
+                            alt="TnG QR" 
+                            className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
+                          />
                       </div>
-                  </div>
-                  
-                  <p className="text-xs sm:text-sm text-gray-500 font-medium">
-                      Scan QR or copy code to redeem <span className="text-blue-600 font-bold">RM88</span> credit.
-                  </p>
+                      
+                      <div className="bg-red-50 border-2 border-red-200 rounded-lg sm:rounded-xl p-2 sm:p-3 mb-2 sm:mb-3">
+                          <p className="text-red-600 font-black text-lg sm:text-2xl">
+                              {tngCountdown}s
+                          </p>
+                          <p className="text-xs sm:text-sm text-red-500 font-medium">Time remaining to scan</p>
+                      </div>
+                      
+                      <p className="text-xs sm:text-sm text-gray-500 font-medium">
+                          Scan QR code to redeem your <span className="text-blue-600 font-bold">TnG reward</span>.
+                      </p>
+                    </>
+                  ) : (
+                    <div className="py-6 sm:py-8">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 text-red-600 text-3xl sm:text-4xl">
+                          <i className="fa-solid fa-times-circle"></i>
+                      </div>
+                      <h4 className="text-xl sm:text-2xl font-black text-red-600 uppercase mb-2 sm:mb-3">Expired</h4>
+                      <p className="text-sm sm:text-base text-gray-500 font-medium">
+                          The TnGo QR Scan has expired. Come back tomorrow for your angpau.
+                      </p>
+                    </div>
+                  )}
               </div>
           </div>
       )}
