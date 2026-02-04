@@ -68,6 +68,13 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
           }),
         });
         
+        if (!checkResponse.ok) {
+          console.error('[v0] Check API error:', checkResponse.status);
+          // If check API fails, continue with submission (fail open)
+          await onStart(formData);
+          return;
+        }
+        
         const checkData = await checkResponse.json();
         
         if (checkData.exists) {
@@ -79,7 +86,13 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
         await onStart(formData);
       } catch (error) {
         console.error('[v0] Error checking user:', error);
-        setErrorMessage('Error checking entry. Please try again.');
+        // If check fails, continue with submission (fail open)
+        try {
+          await onStart(formData);
+        } catch (submitError) {
+          console.error('[v0] Error submitting:', submitError);
+          setErrorMessage('Error submitting entry. Please try again.');
+        }
       } finally {
         setIsSubmitting(false);
       }
