@@ -78,7 +78,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
         const checkData = await checkResponse.json();
         
         if (checkData.exists) {
-          setErrorMessage("You've already opened your angpau!");
+          setErrorMessage("You have already submitted today. Please try again tomorrow.");
           setIsSubmitting(false);
           return;
         }

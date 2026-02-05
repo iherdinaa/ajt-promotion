@@ -59,7 +59,7 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
-// Check if user already exists by email AND phone
+// Check if user already exists by email AND phone on the same day
 async function checkUserExists(accessToken: string, email: string, phone: string): Promise<boolean> {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A:X`;
   
@@ -77,13 +77,20 @@ async function checkUserExists(accessToken: string, email: string, phone: string
   const data = await response.json();
   const rows = data.values || [];
   
-  // Find row with matching email AND phone number
-  // email is column E (index 4), phone is column F (index 5)
+  // Get today's date in YYYY-MM-DD format (Malaysia timezone - UTC+8)
+  const todayDate = new Date(new Date().getTime() + (8 * 60 * 60 * 1000)).toISOString().split('T')[0];
+  
+  // Find row with matching email AND phone number AND same date
+  // timestamp is column A (index 0), email is column E (index 4), phone is column F (index 5)
   for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
+    const rowTimestamp = rows[i][0] || '';
     const rowEmail = (rows[i][4] || '').trim();
     const rowPhone = (rows[i][5] || '').trim();
     
-    if (rowEmail === email.trim() && rowPhone === phone.trim()) {
+    // Extract date from timestamp (format: YYYY-MM-DD)
+    const rowDate = rowTimestamp.split('T')[0];
+    
+    if (rowEmail === email.trim() && rowPhone === phone.trim() && rowDate === todayDate) {
       return true;
     }
   }

@@ -266,46 +266,43 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                     <p className="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-wide sm:tracking-widest whitespace-nowrap">Share the Prosperity</p>
                     <div className="h-px bg-gray-200 flex-1"></div>
                 </div>
-                <div className="flex gap-2 sm:gap-3 justify-center">
-                    <button onClick={() => handleShare('whatsapp')} className="flex items-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-whatsapp text-base sm:text-lg md:text-xl"></i> 
-                        <span className="text-xs sm:text-sm md:text-base">WhatsApp</span>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-stretch">
+                    <button onClick={() => handleShare('whatsapp')} className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95 flex-1 sm:flex-initial">
+                        <i className="fa-brands fa-whatsapp text-base sm:text-lg"></i> 
+                        <span className="text-xs sm:text-sm">WhatsApp</span>
                     </button>
-                    <button onClick={() => handleShare('linkedin')} className="flex items-center gap-1.5 sm:gap-2 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-linkedin text-base sm:text-lg md:text-xl"></i> 
-                        <span className="text-xs sm:text-sm md:text-base">LinkedIn</span>
+                    <button onClick={() => handleShare('linkedin')} className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95 flex-1 sm:flex-initial">
+                        <i className="fa-brands fa-linkedin text-base sm:text-lg"></i> 
+                        <span className="text-xs sm:text-sm">LinkedIn</span>
+                    </button>
+                    <button 
+                      onClick={async () => {
+                        if (!isLoadingMoreHuat) {
+                          setIsLoadingMoreHuat(true);
+                          try {
+                            await onMoreHuatClick();
+                            setStep('REFERRAL');
+                          } finally {
+                            setIsLoadingMoreHuat(false);
+                          }
+                        }
+                      }}
+                      disabled={isLoadingMoreHuat}
+                      className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl shadow-lg transform active:scale-95 transition-all uppercase tracking-wide border-b-[3px] border-yellow-700 disabled:opacity-70 disabled:cursor-not-allowed flex-1 sm:flex-initial"
+                    >
+                      {isLoadingMoreHuat ? (
+                        <>
+                          <span className="whitespace-nowrap">LOADING...</span>
+                          <i className="fa-solid fa-spinner fa-spin text-sm"></i>
+                        </>
+                      ) : (
+                        <>
+                          <span className="whitespace-nowrap">WANT MORE HUAT?</span>
+                          <i className="fa-solid fa-arrow-right text-sm"></i>
+                        </>
+                      )}
                     </button>
                 </div>
-            </div>
-
-            <div className="w-full max-w-xl mx-auto mt-2 sm:mt-3">
-               <button 
-                onClick={async () => {
-                  if (!isLoadingMoreHuat) {
-                    setIsLoadingMoreHuat(true);
-                    try {
-                      await onMoreHuatClick();
-                      setStep('REFERRAL');
-                    } finally {
-                      setIsLoadingMoreHuat(false);
-                    }
-                  }
-                }}
-                disabled={isLoadingMoreHuat}
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[5px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
-               >
-                 {isLoadingMoreHuat ? (
-                   <>
-                     <span>LOADING...</span>
-                     <i className="fa-solid fa-spinner fa-spin text-base sm:text-lg"></i>
-                   </>
-                 ) : (
-                   <>
-                     <span>WANT MORE HUAT?</span>
-                     <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-base sm:text-lg"></i>
-                   </>
-                 )}
-               </button>
             </div>
           </div>
         )}
