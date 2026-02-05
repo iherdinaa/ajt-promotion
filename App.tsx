@@ -197,6 +197,7 @@ const App: React.FC = () => {
         <PrizeReveal 
           spinCount={spinCount} 
           quizData={quizData}
+          userData={userData}
           onReferralSubmit={handleReferralSubmit}
           onMoreHuatClick={handleMoreHuatClick}
           onShareClick={handleShareClick}
