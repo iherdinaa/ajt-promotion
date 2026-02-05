@@ -1,11 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
-import { QuizData, ReferralData } from '../types';
+import { QuizData, ReferralData, UserData } from '../types';
 import { REWARD_IMAGES } from '../constants';
 
 interface PrizeRevealProps {
   spinCount: number;
   quizData: QuizData | null;
+  userData: UserData | null;
   onReferralSubmit: (referral: ReferralData) => Promise<void>;
   onMoreHuatClick: () => Promise<void>;
   onShareClick: (platform: 'linkedin' | 'whatsapp') => Promise<void>;
@@ -15,13 +16,28 @@ interface PrizeRevealProps {
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onRegisterClick, onLoginClick, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onRegisterClick, onLoginClick, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
   const [tngCountdown, setTngCountdown] = useState(8);
   const [isTngExpired, setIsTngExpired] = useState(false);
   const [isTngLoading, setIsTngLoading] = useState(false);
+  const [isTngOpened, setIsTngOpened] = useState(() => {
+    if (typeof window !== 'undefined' && userData) {
+      const storedData = localStorage.getItem('tng_qr_user');
+      if (storedData) {
+        try {
+          const { email, phone } = JSON.parse(storedData);
+          // If same email AND same phone, TnG is already opened
+          return email === userData.email && phone === (userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone);
+        } catch (e) {
+          return false;
+        }
+      }
+    }
+    return false;
+  });
   
   // Date Logic for Prizes
   const today = new Date();
@@ -159,7 +175,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                 {showTnG && (
                     <div 
                         onClick={async () => {
-                          if (isTngLoading) return;
+                          if (isTngLoading || isTngOpened) return;
                           setIsTngLoading(true);
                           try {
                             await onTngoClick();
@@ -170,9 +186,26 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                             setIsTngLoading(false);
                           }
                         }}
-                        className="cursor-pointer bg-blue-50 p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 border-blue-200 shadow-lg flex flex-col items-center justify-center relative overflow-hidden transition-all active:scale-95 hover:bg-blue-100 group"
+                        className={`p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl border-2 shadow-lg flex flex-col items-center justify-center relative overflow-hidden transition-all ${
+                          isTngOpened 
+                            ? 'bg-gray-200 border-gray-300 cursor-not-allowed opacity-60' 
+                            : 'cursor-pointer bg-blue-50 border-blue-200 active:scale-95 hover:bg-blue-100 group'
+                        }`}
                     >
-                        {isTngLoading ? (
+                        {isTngOpened ? (
+                          <>
+                            <span className="text-[10px] sm:text-xs font-black text-gray-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
+                            <img 
+                                src="https://play-lh.googleusercontent.com/RSjanNWkLuOzTRgj4Yi67PjZ0Qyrbc91856YqBqWewutnzLYj5cYKMPIEM9wRt5KSg" 
+                                alt="TnG" 
+                                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm grayscale"
+                                loading="lazy"
+                            />
+                            <span className="text-xs sm:text-sm font-black text-gray-500 text-center leading-tight bg-gray-300/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                                QR Opened
+                            </span>
+                          </>
+                        ) : isTngLoading ? (
                           <>
                             <span className="text-[10px] sm:text-xs font-black text-blue-500 mb-1 sm:mb-2 uppercase tracking-wide sm:tracking-widest bg-white px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">TnG Reload</span>
                             <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center mb-2 sm:mb-3">
@@ -193,7 +226,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                             />
                             <div className="flex flex-col gap-1">
                               <span className="text-xs sm:text-sm font-black text-blue-700 text-center leading-tight animate-pulse bg-blue-200/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
-                                  Tap to Reveal Code
+                                  Tap to Open QR
                               </span>
                               <span className="text-[9px] sm:text-[10px] font-bold text-red-600 text-center leading-tight">
                                   8s to scan TnG credit
@@ -218,10 +251,21 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
                 {showLunch && (
                     <>
-                        <p className="font-bold text-gray-800 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                            <i className="fa-solid fa-star text-yellow-500 text-[10px] sm:text-sm"></i>
-                            <span>Chance to win <span className="text-red-600 font-black">Free Lunch Treat</span> from AJobThing!</span>
-                        </p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                            <p className="font-bold text-gray-800 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                                <i className="fa-solid fa-star text-yellow-500 text-[10px] sm:text-sm"></i>
+                                <span>Chance to win <span className="text-red-600 font-black">Free Lunch Treat</span> from AJobThing!</span>
+                            </p>
+                            <a 
+                                href="https://epca.in/ajt-wa-channel" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="font-bold text-green-600 hover:text-green-700 underline text-xs sm:text-sm whitespace-nowrap flex items-center gap-1"
+                            >
+                                <i className="fa-brands fa-whatsapp text-sm"></i>
+                                Check out Lucky Winners
+                            </a>
+                        </div>
                         <div className="w-1/2 mx-auto h-px bg-red-200"></div>
                     </>
                 )}
@@ -243,46 +287,43 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                     <p className="text-gray-400 text-[10px] sm:text-xs font-black uppercase tracking-wide sm:tracking-widest whitespace-nowrap">Share the Prosperity</p>
                     <div className="h-px bg-gray-200 flex-1"></div>
                 </div>
-                <div className="flex gap-2 sm:gap-3 justify-center">
-                    <button onClick={() => handleShare('whatsapp')} className="flex items-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-whatsapp text-base sm:text-lg md:text-xl"></i> 
-                        <span className="text-xs sm:text-sm md:text-base">WhatsApp</span>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-stretch">
+                    <button onClick={() => handleShare('whatsapp')} className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95 flex-1 sm:flex-initial">
+                        <i className="fa-brands fa-whatsapp text-base sm:text-lg"></i> 
+                        <span className="text-xs sm:text-sm">WhatsApp</span>
                     </button>
-                    <button onClick={() => handleShare('linkedin')} className="flex items-center gap-1.5 sm:gap-2 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95">
-                        <i className="fa-brands fa-linkedin text-base sm:text-lg md:text-xl"></i> 
-                        <span className="text-xs sm:text-sm md:text-base">LinkedIn</span>
+                    <button onClick={() => handleShare('linkedin')} className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#0077b5] hover:bg-[#00669c] text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-bold transition-all shadow-lg hover:-translate-y-1 active:scale-95 flex-1 sm:flex-initial">
+                        <i className="fa-brands fa-linkedin text-base sm:text-lg"></i> 
+                        <span className="text-xs sm:text-sm">LinkedIn</span>
+                    </button>
+                    <button 
+                      onClick={async () => {
+                        if (!isLoadingMoreHuat) {
+                          setIsLoadingMoreHuat(true);
+                          try {
+                            await onMoreHuatClick();
+                            setStep('REFERRAL');
+                          } finally {
+                            setIsLoadingMoreHuat(false);
+                          }
+                        }
+                      }}
+                      disabled={isLoadingMoreHuat}
+                      className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl shadow-lg transform active:scale-95 transition-all uppercase tracking-wide border-b-[3px] border-yellow-700 disabled:opacity-70 disabled:cursor-not-allowed flex-1 sm:flex-initial"
+                    >
+                      {isLoadingMoreHuat ? (
+                        <>
+                          <span className="whitespace-nowrap">LOADING...</span>
+                          <i className="fa-solid fa-spinner fa-spin text-sm"></i>
+                        </>
+                      ) : (
+                        <>
+                          <span className="whitespace-nowrap">WANT MORE HUAT?</span>
+                          <i className="fa-solid fa-arrow-right text-sm"></i>
+                        </>
+                      )}
                     </button>
                 </div>
-            </div>
-
-            <div className="w-full max-w-xl mx-auto mt-2 sm:mt-3">
-               <button 
-                onClick={async () => {
-                  if (!isLoadingMoreHuat) {
-                    setIsLoadingMoreHuat(true);
-                    try {
-                      await onMoreHuatClick();
-                      setStep('REFERRAL');
-                    } finally {
-                      setIsLoadingMoreHuat(false);
-                    }
-                  }
-                }}
-                disabled={isLoadingMoreHuat}
-                className="w-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:brightness-110 text-red-900 font-black text-base sm:text-lg md:text-xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-[0_6px_30px_rgba(234,179,8,0.5)] transform active:scale-95 transition-all uppercase tracking-wide sm:tracking-widest border-b-[3px] sm:border-b-[4px] md:border-b-[5px] border-yellow-700 flex items-center justify-center gap-2 sm:gap-3 animate-pulse group disabled:opacity-70 disabled:cursor-not-allowed"
-               >
-                 {isLoadingMoreHuat ? (
-                   <>
-                     <span>LOADING...</span>
-                     <i className="fa-solid fa-spinner fa-spin text-base sm:text-lg"></i>
-                   </>
-                 ) : (
-                   <>
-                     <span>WANT MORE HUAT?</span>
-                     <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-base sm:text-lg"></i>
-                   </>
-                 )}
-               </button>
             </div>
           </div>
         )}
@@ -495,7 +536,17 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
               <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[320px] sm:max-w-md md:max-w-lg w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
                   <button 
-                    onClick={() => setIsTnGModalOpen(false)}
+                    onClick={() => {
+                      if (isTngExpired && typeof window !== 'undefined' && userData) {
+                        const phone = userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone;
+                        localStorage.setItem('tng_qr_user', JSON.stringify({ 
+                          email: userData.email, 
+                          phone: phone 
+                        }));
+                        setIsTngOpened(true);
+                      }
+                      setIsTnGModalOpen(false);
+                    }}
                     className="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-400 hover:text-gray-600 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                   >
                       <i className="fa-solid fa-times text-xs sm:text-sm"></i>
@@ -511,7 +562,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
                     <>
                       <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 border-2 border-blue-100">
                           <img 
-                            src="https://files.ajt.my/images/marketing-campaign/image-5f1b357e-6012-4168-9671-dc49d703dda2.jpg" 
+                            src="https://files.ajt.my/images/marketing-campaign/image-93ab30bf-1320-4481-8892-205cb98a341d.jpg" 
                             alt="TnG QR" 
                             className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
                           />

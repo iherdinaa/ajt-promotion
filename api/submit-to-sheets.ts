@@ -109,8 +109,54 @@ async function findRowByEmailAndPhone(accessToken: string, email: string, phone:
   return null;
 }
 
-// Update existing row
-async function updateRow(accessToken: string, rowNumber: number, rowData: string[]): Promise<void> {
+// Get existing row data
+async function getRowData(accessToken: string, rowNumber: number): Promise<string[]> {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:X${rowNumber}`;
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+  return data.values?.[0] || [];
+}
+
+// Update existing row (merge: only update empty cells or specific columns)
+async function updateRow(accessToken: string, rowNumber: number, newData: string[]): Promise<void> {
+  console.log('[v0] Fetching existing row data...');
+  const existingData = await getRowData(accessToken, rowNumber);
+  console.log('[v0] Existing row data:', existingData);
+  
+  // Merge logic: 
+  // - Always update timestamp (column A / index 0)
+  // - Update action columns (K-P: clicks) - accumulate "yes" values
+  // - For other columns: only fill if currently empty
+  const mergedData = newData.map((newValue, index) => {
+    const existingValue = existingData[index] || '';
+    
+    // Always update timestamp
+    if (index === 0) {
+      return newValue;
+    }
+    
+    // Click tracking columns (K-P: indices 10-15) - keep "yes" if already set
+    if (index >= 10 && index <= 15) {
+      return existingValue === 'yes' ? 'yes' : newValue;
+    }
+    
+    // For all other columns: keep existing value if not empty, otherwise use new value
+    return existingValue ? existingValue : newValue;
+  });
+  
+  console.log('[v0] Merged row data:', mergedData);
+  
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${SHEET_NAME}!A${rowNumber}:X${rowNumber}?valueInputOption=USER_ENTERED`;
 
   const response = await fetch(url, {
@@ -120,7 +166,7 @@ async function updateRow(accessToken: string, rowNumber: number, rowData: string
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      values: [rowData],
+      values: [mergedData],
     }),
   });
 
@@ -128,6 +174,8 @@ async function updateRow(accessToken: string, rowNumber: number, rowData: string
     const errorText = await response.text();
     throw new Error(`Failed to update row: ${errorText}`);
   }
+  
+  console.log('[v0] Row updated successfully');
 }
 
 // Append new row to Google Sheet
