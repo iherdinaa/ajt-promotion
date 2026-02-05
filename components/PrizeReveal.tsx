@@ -1,11 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
-import { QuizData, ReferralData } from '../types';
+import { QuizData, ReferralData, UserData } from '../types';
 import { REWARD_IMAGES } from '../constants';
 
 interface PrizeRevealProps {
   spinCount: number;
   quizData: QuizData | null;
+  userData: UserData | null;
   onReferralSubmit: (referral: ReferralData) => Promise<void>;
   onMoreHuatClick: () => Promise<void>;
   onShareClick: (platform: 'linkedin' | 'whatsapp') => Promise<void>;
@@ -15,7 +16,7 @@ interface PrizeRevealProps {
   onReset: () => void;
 }
 
-const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onRegisterClick, onLoginClick, onReset }) => {
+const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferralSubmit, onMoreHuatClick, onShareClick, onTngoClick, onRegisterClick, onLoginClick, onReset }) => {
   // Directly start at REVEAL to satisfy "auto reveal prize"
   const [step, setStep] = useState<'REVEAL' | 'REFERRAL' | 'REFERRAL_SUCCESS'>('REVEAL');
   const [isTnGModalOpen, setIsTnGModalOpen] = useState(false);
@@ -23,8 +24,17 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
   const [isTngExpired, setIsTngExpired] = useState(false);
   const [isTngLoading, setIsTngLoading] = useState(false);
   const [isTngOpened, setIsTngOpened] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('tng_qr_opened') === 'true';
+    if (typeof window !== 'undefined' && userData) {
+      const storedData = localStorage.getItem('tng_qr_user');
+      if (storedData) {
+        try {
+          const { email, phone } = JSON.parse(storedData);
+          // If same email AND same phone, TnG is already opened
+          return email === userData.email && phone === (userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone);
+        } catch (e) {
+          return false;
+        }
+      }
     }
     return false;
   });
@@ -241,10 +251,21 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
             <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
                 {showLunch && (
                     <>
-                        <p className="font-bold text-gray-800 flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                            <i className="fa-solid fa-star text-yellow-500 text-[10px] sm:text-sm"></i>
-                            <span>Chance to win <span className="text-red-600 font-black">Free Lunch Treat</span> from AJobThing!</span>
-                        </p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+                            <p className="font-bold text-gray-800 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                                <i className="fa-solid fa-star text-yellow-500 text-[10px] sm:text-sm"></i>
+                                <span>Chance to win <span className="text-red-600 font-black">Free Lunch Treat</span> from AJobThing!</span>
+                            </p>
+                            <a 
+                                href="https://epca.in/ajt-wa-channel" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="font-bold text-green-600 hover:text-green-700 underline text-xs sm:text-sm whitespace-nowrap flex items-center gap-1"
+                            >
+                                <i className="fa-brands fa-whatsapp text-sm"></i>
+                                Check out Lucky Winners
+                            </a>
+                        </div>
                         <div className="w-1/2 mx-auto h-px bg-red-200"></div>
                     </>
                 )}
@@ -516,8 +537,12 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, onReferralSubmit, o
               <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[320px] sm:max-w-md md:max-w-lg w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
                   <button 
                     onClick={() => {
-                      if (isTngExpired && typeof window !== 'undefined') {
-                        localStorage.setItem('tng_qr_opened', 'true');
+                      if (isTngExpired && typeof window !== 'undefined' && userData) {
+                        const phone = userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone;
+                        localStorage.setItem('tng_qr_user', JSON.stringify({ 
+                          email: userData.email, 
+                          phone: phone 
+                        }));
                         setIsTngOpened(true);
                       }
                       setIsTnGModalOpen(false);
