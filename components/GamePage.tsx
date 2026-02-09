@@ -156,7 +156,17 @@ const GamePage: React.FC<GamePageProps> = ({ currentSpin, onComplete }) => {
         opacity: 0.4 + Math.random() * 0.3,
         zIndex: 0
     }));
-    return { launchPadTrees, farBankTrees };
+    
+    // River edge trees: positioned just before the river starts
+    const riverEdgeTrees = Array.from({ length: 8 }).map((_, i) => ({
+        id: `river-tree-${i}`,
+        left: (RIVER_START_M - 30) * METER_SCALE + i * 80 + Math.random() * 30,
+        scale: 0.35 + Math.random() * 0.25,
+        opacity: 0.6 + Math.random() * 0.3,
+        zIndex: 15
+    }));
+    
+    return { launchPadTrees, farBankTrees, riverEdgeTrees };
   }, []);
 
 
@@ -567,6 +577,28 @@ const GamePage: React.FC<GamePageProps> = ({ currentSpin, onComplete }) => {
 
                 {/* Trees - Small, Spaced out, No Overlap */}
                 {trees.launchPadTrees.map(tree => (
+                    <i 
+                        key={tree.id}
+                        className="fa-solid fa-tree text-[#1b4332] absolute -top-40 text-[250px] pointer-events-none"
+                        style={{
+                            left: `${tree.left}px`,
+                            transform: `scale(${tree.scale})`,
+                            opacity: tree.opacity,
+                            zIndex: tree.zIndex
+                        }}
+                    ></i>
+                ))}
+            </div>
+
+            {/* Trees Before River - On Launch Pad Edge */}
+            <div 
+                className="absolute top-[30px] h-[800px] pointer-events-none"
+                style={{ 
+                    left: `-1000px`,
+                    width: `${1000 + (RIVER_START_M * METER_SCALE)}px` 
+                }}
+            >
+                {trees.riverEdgeTrees.map(tree => (
                     <i 
                         key={tree.id}
                         className="fa-solid fa-tree text-[#1b4332] absolute -top-40 text-[250px] pointer-events-none"

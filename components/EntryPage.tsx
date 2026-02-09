@@ -248,7 +248,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
             >
                {isLoading ? (
                  <>
-                   <span className="animate-spin">⏳</span> PREPARING TO THROW
+                   <span className="animate-spin">⏳</span> Preparing
                  </>
                ) : (
                  <>
