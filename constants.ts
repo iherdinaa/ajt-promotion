@@ -45,4 +45,5 @@ export const IMAGES = {
   fallingSycee: 'https://png.pngtree.com/png-vector/20251210/ourmid/pngtree-golden-sycee-png-image_18129321.webp',
   bgCoin1: 'https://files.ajt.my/images/marketing-campaign/image-add3bdd0-1260-4aaa-b651-926f5f2a5cae.png',
   bgCoin2: 'https://files.ajt.my/images/marketing-campaign/image-bb617b55-e3aa-49b3-9520-2398e6a47187.png',
+  tangerine: 'https://files.ajt.my/images/marketing-campaign/image-bfc3671e-f065-4f7d-b1af-f899e3d1d241.png',
 };

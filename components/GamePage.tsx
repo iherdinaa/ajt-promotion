@@ -11,6 +11,7 @@ const ASSETS = {
   firework: 'https://cliply.co/wp-content/uploads/2021/09/CLIPLY_372109170_FREE_FIREWORKS_400.gif',
   bush: 'https://files.ajt.my/images/marketing-campaign/image-52b8bfce-3e39-4497-a862-b3fa89786c8b.png',
   wind: 'https://i.pinimg.com/originals/9f/2d/fd/9f2dfd681c266e8d35220faff31a99f4.gif',
+  tangerine: 'https://files.ajt.my/images/marketing-campaign/image-bfc3671e-f065-4f7d-b1af-f899e3d1d241.png',
 };
 
 interface GamePageProps {
@@ -678,7 +679,7 @@ const GamePage: React.FC<GamePageProps> = ({ currentSpin, onComplete }) => {
                 onTouchStart={handleStart}
             >
                 <img 
-                    src={IMAGES.tangerine} 
+                    src={ASSETS.tangerine} 
                     alt="Tangerine" 
                     className="w-full h-full object-contain drop-shadow-2xl select-none pointer-events-none filter brightness-110"
                 />
