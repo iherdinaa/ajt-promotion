@@ -562,7 +562,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                     <>
                       <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 border-2 border-blue-100">
                           <img 
-                            src="https://files.ajt.my/images/marketing-campaign/image-ffba1e6c-dffa-4b83-bf06-20b8d303812b.jpg
+                            src="https://files.ajt.my/images/marketing-campaign/image-effef517-7d8c-4c03-9b8b-4f78ea5a9cbb.jpg
                             " 
                             alt="TnG QR" 
                             className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
