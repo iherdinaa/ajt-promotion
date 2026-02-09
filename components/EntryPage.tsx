@@ -6,10 +6,21 @@ interface EntryPageProps {
   onStart: (data: UserData) => void;
 }
 
-const COMPANY_NAMES = [
-  'TechCorp Malaysia', 'Digital Solutions SG', 'Startup Hub KL', 'Innovation Labs MY',
-  'CloudTech Asia', 'DataFlow Systems', 'SmartBiz Solutions', 'FutureWork MY',
-  'NextGen Technologies', 'Quantum Solutions', 'NexTech Industries', 'AlphaBiz Corp'
+const MASKED_COMPANIES = [
+  { name: 'Mc****** Ma****** Sdn Bhd', distance: '500m' },
+  { name: 'Pe****** Di****** Sdn Bhd', distance: '450m' },
+  { name: 'Ai****** Te****** Sdn Bhd', distance: '520m' },
+  { name: 'Ge****** So****** Sdn Bhd', distance: '480m' },
+  { name: 'Da****** Sy****** Sdn Bhd', distance: '495m' },
+  { name: 'Sm****** Bu****** Sdn Bhd', distance: '510m' },
+  { name: 'Te****** In****** Sdn Bhd', distance: '475m' },
+  { name: 'Di****** Co****** Sdn Bhd', distance: '530m' },
+  { name: 'Cy****** Ne****** Sdn Bhd', distance: '465m' },
+  { name: 'Qu****** La****** Sdn Bhd', distance: '505m' },
+  { name: 'Ne****** Te****** Sdn Bhd', distance: '490m' },
+  { name: 'Al****** Gr****** Sdn Bhd', distance: '525m' },
+  { name: 'Fu****** So****** Sdn Bhd', distance: '515m' },
+  { name: 'Vi****** De****** Sdn Bhd', distance: '470m' },
 ];
 
 const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
@@ -20,11 +31,12 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
     countryCode: '🇲🇾 (+60)',
   });
 
-  const [notification, setNotification] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ name: string; distance: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const showNotification = () => {
-      const randomCompany = COMPANY_NAMES[Math.floor(Math.random() * COMPANY_NAMES.length)];
+      const randomCompany = MASKED_COMPANIES[Math.floor(Math.random() * MASKED_COMPANIES.length)];
       setNotification(randomCompany);
       setTimeout(() => setNotification(null), 4000);
     };
@@ -38,7 +50,11 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.companyName && formData.email && formData.phone) {
-      onStart(formData);
+      setIsLoading(true);
+      // Simulate preparation time before starting game
+      setTimeout(() => {
+        onStart(formData);
+      }, 1500);
     }
   };
 
@@ -74,13 +90,13 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center px-3 md:px-6 lg:px-12 overflow-hidden">
       
-      {/* Live Company Notification */}
+      {/* Live Company Notification - Centered, aligned with logo */}
       {notification && (
-        <div className="absolute top-16 left-4 md:left-8 z-50 animate-slide-in-left">
-          <div className="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-full shadow-2xl border-2 border-green-300 flex items-center gap-2 text-xs md:text-sm font-bold">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 text-white px-5 py-2.5 rounded-full shadow-2xl border-2 border-orange-300 flex items-center gap-2 text-xs md:text-sm font-bold">
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            <span className="font-black">{notification}</span>
-            <span className="opacity-90">just played!</span>
+            <span className="font-black">{notification.name}</span>
+            <span className="opacity-95 font-extrabold">got {notification.distance}!</span>
           </div>
         </div>
       )}
@@ -115,7 +131,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
           <img 
             src={IMAGES.campaignHeader} 
             alt="A HUAT THING" 
-            className="w-full max-w-[220px] md:max-w-[300px] lg:max-w-[380px] h-auto drop-shadow-2xl filter brightness-110"
+            className="w-full max-w-[180px] md:max-w-[260px] lg:max-w-[340px] h-auto drop-shadow-2xl filter brightness-110"
           />
           
           <div className="max-w-xl w-full flex flex-col items-center space-y-1">
@@ -223,9 +239,22 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
 
             <button 
               type="submit"
-              className="w-full bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-500 hover:to-red-600 text-white font-black text-2xl md:text-3xl py-4 rounded-xl shadow-xl transform active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-[0.1em] mt-3 pulse-gold border-b-4 border-red-900"
+              disabled={isLoading}
+              className={`w-full font-black text-2xl md:text-3xl py-4 rounded-xl shadow-xl transform transition-all flex items-center justify-center gap-2 uppercase tracking-[0.1em] mt-3 border-b-4 ${
+                isLoading 
+                  ? 'bg-gray-400 border-gray-500 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-500 hover:to-red-600 active:scale-95 pulse-gold border-red-900'
+              } text-white`}
             >
-               THROW NOW <span className="animate-bounce">🍊</span>
+               {isLoading ? (
+                 <>
+                   <span className="animate-spin">⏳</span> PREPARING TO THROW
+                 </>
+               ) : (
+                 <>
+                   THROW NOW <span className="animate-bounce">🍊</span>
+                 </>
+               )}
             </button>
           </form>
         </div>
