@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { UserData } from '../types';
 import { IMAGES, MAJOR_REWARDS, FLOATING_VOUCHERS, RM2888_VOUCHER } from '../constants';
 
 interface EntryPageProps {
-  onStart: (data: UserData) => Promise<void>;
+  onStart: (data: UserData) => void;
 }
 
 const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
@@ -14,88 +13,11 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
     phone: '',
     countryCode: '🇲🇾 (+60)',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [currentCompany, setCurrentCompany] = useState(0);
 
-  // Live report company names with masking
-  const companies = [
-    "Agen** Jas***** Sdn Bhd",
-    "Tech*** Inno******* Solutions",
-    "Golden Dra*** Holdings",
-    "Mala**** Energ* Corp",
-    "Star** Ventures Pte Ltd",
-    "Paci*** Trading Co",
-    "Brig** Logistics Sdn Bhd",
-    "Prop***** Consulting",
-    "Urban Dev******** Group",
-    "Suns*** Resources",
-    "Excel*** Manufacturing",
-    "Digi*** Transform****",
-    "Asia* Connect Sdn Bhd",
-    "Green For**** Industries",
-    "Smart Cit* Solutions",
-    "Mega Ret*** Chain",
-    "Premi** Healthcare",
-    "Innov**** Tech Hub",
-    "Glob** Shipping Ltd",
-    "Future Fi***** Group"
-  ];
-
-  // Rotate companies every 3 seconds
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentCompany((prev) => (prev + 1) % companies.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
-    
-    if (formData.companyName && formData.email && formData.phone && !isSubmitting) {
-      setIsSubmitting(true);
-      try {
-        // Check if user already played
-        const phone = formData.countryCode.match(/\+\d+/)?.[0] + formData.phone || formData.phone;
-        const checkResponse = await fetch('/api/check-user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            email: formData.email, 
-            phone: phone 
-          }),
-        });
-        
-        if (!checkResponse.ok) {
-          console.error('[v0] Check API error:', checkResponse.status);
-          // If check API fails, continue with submission (fail open)
-          await onStart(formData);
-          return;
-        }
-        
-        const checkData = await checkResponse.json();
-        
-        if (checkData.exists) {
-          setErrorMessage("You have already submitted today. Please try again tomorrow.");
-          setIsSubmitting(false);
-          return;
-        }
-        
-        await onStart(formData);
-      } catch (error) {
-        console.error('[v0] Error checking user:', error);
-        // If check fails, continue with submission (fail open)
-        try {
-          await onStart(formData);
-        } catch (submitError) {
-          console.error('[v0] Error submitting:', submitError);
-          setErrorMessage('Error submitting entry. Please try again.');
-        }
-      } finally {
-        setIsSubmitting(false);
-      }
+    if (formData.companyName && formData.email && formData.phone) {
+      onStart(formData);
     }
   };
 
@@ -129,36 +51,23 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
   const getVoucherImg = (i: number) => FLOATING_VOUCHERS[i % FLOATING_VOUCHERS.length];
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-start sm:justify-center px-3 sm:px-4 md:px-6 lg:px-12 xl:px-16 overflow-y-auto overflow-x-hidden py-2 sm:py-4">
+    <div className="relative w-full h-full flex flex-col items-center justify-center px-4 md:px-8 lg:px-16 overflow-hidden">
       
-      {/* Live Report Notification - Top Center */}
-      <div className="absolute top-3 sm:top-4 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none">
-        <div className="bg-red-600/85 backdrop-blur-sm border-2 border-yellow-400/70 rounded-lg shadow-lg px-3 py-1.5 sm:px-4 sm:py-2 animate-in fade-in zoom-in duration-500" key={currentCompany}>
-          <div className="flex items-center gap-2">
-            <span className="text-yellow-300 text-sm animate-pulse">🧧</span>
-            <div className="text-white font-bold text-[10px] sm:text-xs whitespace-nowrap">
-              <span className="text-yellow-300">{companies[currentCompany]}</span> opened!
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Scattered Floating Vouchers - Visible Layer */}
-      {/* Reduced for better performance on all devices */}
+      {/* Resized to be slightly smaller (w-20 to w-36 range) to be less obtrusive */}
       <div className="absolute inset-0 pointer-events-none overflow-visible z-0">
-         {voucherPositions.slice(0, 3).map((pos, i) => (
+         {voucherPositions.map((pos, i) => (
              <img 
                 key={i}
                 src={getVoucherImg(i)}
                 alt=""
-                className="absolute w-12 sm:w-16 md:w-20 lg:w-28 drop-shadow-lg float-animation opacity-70 hidden md:block"
+                className="absolute w-20 md:w-28 lg:w-36 drop-shadow-xl float-animation opacity-80"
                 style={{
                     top: pos.top,
                     left: pos.left,
                     animationDelay: pos.delay,
                     transform: `rotate(${pos.rotate})`,
                 }}
-                loading="lazy"
              />
          ))}
       </div>
@@ -167,38 +76,40 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
       <div className="absolute inset-0 central-glow pointer-events-none z-[-1]"></div>
       
       {/* Main Container - Left Title, Right Form */}
-      <div className="w-full max-w-[1200px] xl:max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-8 xl:gap-12 z-10 relative">
+      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16 z-10 relative">
         
         {/* Left Column: Huge Title & Copy & Major Rewards */}
-        <div className="w-full lg:w-3/5 flex flex-col items-center text-center animate-slide-up space-y-1 relative">
+        <div className="w-full lg:w-3/5 flex flex-col items-center text-center animate-slide-up space-y-1 md:space-y-2 relative">
           <img 
             src={IMAGES.campaignHeader} 
             alt="A HUAT THING" 
-            className="w-full max-w-[220px] sm:max-w-[280px] md:max-w-[360px] lg:max-w-[460px] h-auto drop-shadow-2xl filter brightness-110"
-            loading="eager"
+            className="w-full max-w-[280px] md:max-w-[380px] lg:max-w-[480px] h-auto drop-shadow-2xl filter brightness-110"
           />
           
           <div className="max-w-2xl w-full flex flex-col items-center space-y-2">
             {/* Copy */}
             <div className="relative p-1 mx-auto">
                 <div className="absolute inset-0 blur-xl bg-black/20 rounded-full opacity-40 transform scale-x-125"></div>
-                <h2 className="relative text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">
-                    Tap Your Ong <br/>
-                    <span className="text-base sm:text-xl md:text-3xl lg:text-4xl text-white opacity-95 block mt-1 sm:mt-2 font-bold tracking-tight text-shadow-md">
+                {/* UPDATED TITLE HERE */}
+                <h2 className="relative text-3xl md:text-5xl lg:text-6xl font-black italic tracking-tighter uppercase leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] whitespace-nowrap md:whitespace-normal">
+                    Throw Tangerine <br/>
+                    <span className="text-2xl md:text-4xl lg:text-5xl text-white opacity-95 block mt-2 font-bold tracking-tight text-shadow-md">
                         & Win Huat Rewards
                     </span>
                 </h2>
             </div>
             
             {/* Major Rewards Display - BIGGER and Visible */}
-            <div className="w-full pt-2 sm:pt-4 flex justify-center overflow-visible pb-2 sm:pb-4 lg:pb-8">
-               <div className="flex flex-row justify-center items-end -space-x-2 sm:-space-x-4 md:-space-x-6 lg:-space-x-8">
+            <div className="w-full pt-4 flex justify-center overflow-visible pb-8">
+               <div className="flex flex-row justify-center items-end -space-x-4 md:-space-x-8">
                   {MAJOR_REWARDS.map((reward, idx) => (
-                    <div key={idx} className="relative group transition-all duration-200 hover:-translate-y-3 hover:z-50 hover:scale-105 z-10">
-                        <div className="w-28 h-28 sm:w-40 sm:h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 drop-shadow-[0_8px_8px_rgba(0,0,0,0.4)] sm:drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] filter brightness-110">
-                            <img src={reward.img} alt={reward.label} className="w-full h-full object-contain" loading="lazy" />
+                    <div key={idx} className="relative group transition-all duration-300 hover:-translate-y-4 hover:z-50 hover:scale-105 z-10">
+                        {/* Increased dimensions significantly */}
+                        <div className="w-40 h-40 md:w-64 md:h-64 lg:w-80 lg:h-80 drop-shadow-[0_20px_20px_rgba(0,0,0,0.7)] filter brightness-110">
+                            <img src={reward.img} alt={reward.label} className="w-full h-full object-contain" />
                         </div>
-                        <div className="absolute inset-0 bg-yellow-400/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        {/* Glow effect on hover */}
+                        <div className="absolute inset-0 bg-yellow-400/20 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </div>
                   ))}
                </div>
@@ -207,54 +118,53 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
         </div>
 
         {/* Right Column: Big Form with Voucher Above */}
-        <div className="w-full lg:w-2/5 flex flex-col items-center justify-center lg:justify-end animate-scale-bounce mt-2 sm:mt-4 lg:mt-0 relative">
+        <div className="w-full lg:w-2/5 flex flex-col items-center justify-center lg:justify-end animate-scale-bounce mt-4 lg:mt-0 relative">
           
-          {/* RM2888 Giant Voucher - Optimized Size */}
-          <div className="relative z-40 mb-[-20px] sm:mb-[-30px] md:mb-[-40px] w-28 sm:w-40 md:w-52 lg:w-64 transition-transform hover:scale-105 duration-200">
+          {/* RM2888 Giant Voucher - Massive Size Update */}
+          <div className="relative z-40 mb-[-40px] w-48 md:w-64 lg:w-80 transition-transform hover:scale-105 duration-300">
              <img 
                 src={RM2888_VOUCHER} 
                 alt="RM2888 Voucher" 
-                className="w-full h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)] float-animation" 
-                loading="eager"
+                className="w-full h-auto drop-shadow-[0_15px_30px_rgba(0,0,0,0.4)] float-animation" 
              />
           </div>
 
-          <form onSubmit={handleSubmit} className="w-full max-w-[480px] lg:max-w-[520px] bg-white p-4 sm:p-5 md:p-6 lg:p-8 rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.5rem] border-[4px] sm:border-[5px] md:border-[6px] lg:border-[8px] border-yellow-500 shadow-[0_10px_30px_rgba(0,0,0,0.4)] sm:shadow-[0_20px_50px_rgba(0,0,0,0.5)] space-y-3 sm:space-y-4 md:space-y-5 solid-shadow relative pt-8 sm:pt-10 md:pt-12 z-30">
+          <form onSubmit={handleSubmit} className="w-full max-w-[520px] bg-white p-6 md:p-10 rounded-[2.5rem] border-[8px] border-yellow-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] space-y-6 solid-shadow relative pt-12 z-30">
             
-            <div className="absolute -top-6 -right-6 sm:-top-8 sm:-right-8 md:-top-10 md:-right-10 text-4xl sm:text-6xl md:text-7xl rotate-12 animate-pulse filter drop-shadow-2xl hidden sm:block">
-              🧧
+            <div className="absolute -top-10 -right-10 text-8xl rotate-12 animate-pulse filter drop-shadow-2xl hidden md:block">
+              🍊
             </div>
 
-            <div className="space-y-1 sm:space-y-2 text-left">
-              <label className="text-xs sm:text-sm font-black uppercase tracking-widest text-red-700">Company Name</label>
+            <div className="space-y-2 text-left">
+              <label className="text-sm md:text-base font-black uppercase tracking-widest text-red-700">Company Name</label>
               <input 
                 required
                 type="text" 
                 placeholder="e.g. Acme Corp" 
-                className="w-full bg-gray-50 border-[2px] sm:border-[3px] border-gray-100 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 transition-all font-bold text-sm sm:text-base md:text-lg"
+                className="w-full bg-gray-50 border-[3px] border-gray-100 rounded-xl px-4 py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 transition-all font-bold text-lg md:text-xl"
                 value={formData.companyName}
                 onChange={(e) => setFormData({...formData, companyName: e.target.value})}
               />
             </div>
 
-            <div className="space-y-1 sm:space-y-2 text-left">
-              <label className="text-xs sm:text-sm font-black uppercase tracking-widest text-red-700">Work Email</label>
+            <div className="space-y-2 text-left">
+              <label className="text-sm md:text-base font-black uppercase tracking-widest text-red-700">Work Email</label>
               <input 
                 required
                 type="email" 
                 placeholder="name@company.com" 
-                className="w-full bg-gray-50 border-[2px] sm:border-[3px] border-gray-100 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 transition-all font-bold text-sm sm:text-base md:text-lg"
+                className="w-full bg-gray-50 border-[3px] border-gray-100 rounded-xl px-4 py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 transition-all font-bold text-lg md:text-xl"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
             </div>
 
-            <div className="flex gap-2 sm:gap-3 text-left">
-              <div className="flex-none w-24 sm:w-28 md:w-32 space-y-1 sm:space-y-2">
-                <label className="text-xs sm:text-sm font-black uppercase tracking-widest text-red-700">Region</label>
+            <div className="flex gap-3 text-left">
+              <div className="flex-none w-28 md:w-36 space-y-2">
+                <label className="text-sm md:text-base font-black uppercase tracking-widest text-red-700">Region</label>
                 <div className="relative">
                   <select 
-                    className="w-full bg-gray-50 border-[2px] sm:border-[3px] border-gray-100 rounded-lg sm:rounded-xl px-1 sm:px-2 py-2.5 sm:py-3 md:py-4 text-gray-900 focus:outline-none focus:border-red-500 transition-all appearance-none font-bold text-center text-xs sm:text-sm md:text-base"
+                    className="w-full bg-gray-50 border-[3px] border-gray-100 rounded-xl px-2 py-4 text-gray-900 focus:outline-none focus:border-red-500 transition-all appearance-none font-bold text-center text-base md:text-lg"
                     value={formData.countryCode}
                     onChange={(e) => setFormData({...formData, countryCode: e.target.value})}
                   >
@@ -264,39 +174,27 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
                       </option>
                     ))}
                   </select>
-                  <i className="fa-solid fa-chevron-down absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-[10px] sm:text-xs"></i>
+                  <i className="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
                 </div>
               </div>
-              <div className="flex-1 space-y-1 sm:space-y-2">
-                <label className="text-xs sm:text-sm font-black uppercase tracking-widest text-red-700">Phone Number</label>
+              <div className="flex-1 space-y-2">
+                <label className="text-sm md:text-base font-black uppercase tracking-widest text-red-700">Phone Number</label>
                 <input 
                   required
                   type="tel" 
                   placeholder="123456789" 
-                  className="w-full bg-gray-50 border-[2px] sm:border-[3px] border-gray-100 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 transition-all font-bold text-sm sm:text-base md:text-lg"
+                  className="w-full bg-gray-50 border-[3px] border-gray-100 rounded-xl px-4 py-4 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 transition-all font-bold text-lg md:text-xl"
                   value={formData.phone}
                   onChange={handlePhoneChange}
                 />
               </div>
             </div>
 
-            {errorMessage && (
-              <div className="w-full bg-red-100 border-2 border-red-500 text-red-700 px-4 py-3 rounded-xl mt-2 sm:mt-3 text-sm sm:text-base font-bold text-center">
-                <i className="fa-solid fa-exclamation-triangle mr-2"></i>
-                {errorMessage}
-              </div>
-            )}
-
             <button 
               type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-500 hover:to-red-600 text-white font-black text-lg sm:text-xl md:text-2xl lg:text-3xl py-3 sm:py-4 md:py-5 rounded-xl sm:rounded-2xl shadow-xl transform active:scale-95 transition-all flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-wide sm:tracking-[0.1em] mt-2 sm:mt-4 pulse-gold border-b-2 sm:border-b-4 border-red-900 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-500 hover:to-red-600 text-white font-black text-3xl md:text-4xl py-5 rounded-2xl shadow-xl transform active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.1em] mt-4 pulse-gold border-b-4 border-red-900"
             >
-               {isSubmitting ? (
-                 <>SUBMITTING... <i className="fa-solid fa-spinner fa-spin text-sm sm:text-base md:text-lg"></i></>
-               ) : (
-                 <>OPEN ANGPAU <i className="fa-solid fa-envelope-open-text animate-bounce text-sm sm:text-base md:text-lg"></i></>
-               )}
+               THROW NOW <span className="animate-bounce">🍊</span>
             </button>
           </form>
         </div>
