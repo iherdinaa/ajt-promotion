@@ -374,27 +374,6 @@ const GamePage: React.FC<GamePageProps> = ({ currentSpin, onComplete }) => {
         dx *= ratio;
         dy *= ratio;
     }
-    
-    // Ensure tangerine stays within screen bounds
-    if (tangerineRef.current) {
-        const rect = tangerineRef.current.getBoundingClientRect();
-        const parentRect = tangerineRef.current.parentElement?.getBoundingClientRect();
-        
-        if (parentRect) {
-            // Calculate the tangerine's would-be position
-            const newLeft = rect.left + dx;
-            const newTop = rect.top + dy;
-            const newRight = newLeft + rect.width;
-            const newBottom = newTop + rect.height;
-            
-            // Constrain to screen bounds
-            if (newLeft < 0) dx = -rect.left;
-            if (newTop < 0) dy = -rect.top;
-            if (newRight > window.innerWidth) dx = window.innerWidth - rect.right;
-            if (newBottom > window.innerHeight) dy = window.innerHeight - rect.bottom;
-        }
-    }
-    
     dragCurrent.current = { x: dx, y: dy };
 
     // Move Tangerine Visually - DIRECT DOM UPDATE
