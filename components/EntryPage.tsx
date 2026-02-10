@@ -93,10 +93,10 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
       {/* Live Company Notification - Centered, aligned with logo */}
       {notification && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 text-white px-5 py-2.5 rounded-full shadow-2xl border-2 border-orange-300 flex items-center gap-2 text-xs md:text-sm font-bold">
+          <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white px-5 py-2.5 rounded-full shadow-2xl border-2 border-red-300 flex items-center gap-2 text-xs md:text-sm font-bold">
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
             <span className="font-black">{notification.name}</span>
-            <span className="opacity-95 font-extrabold">got {notification.distance}!</span>
+            <span className="opacity-95 font-extrabold">got {notification.distance}! 🍊</span>
           </div>
         </div>
       )}
@@ -138,7 +138,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
             {/* Copy */}
             <div className="relative p-1 mx-auto">
                 <div className="absolute inset-0 blur-xl bg-black/20 rounded-full opacity-40 transform scale-x-125"></div>
-                <h2 className="relative text-2xl md:text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] whitespace-nowrap md:whitespace-normal">
+                <h2 className="relative text-2xl md:text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-red-400 via-red-300 to-red-500 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] whitespace-nowrap md:whitespace-normal">
                     Throw Tangerine <br/>
                     <span className="text-xl md:text-3xl lg:text-4xl text-white opacity-95 block mt-1 font-bold tracking-tight text-shadow-md">
                         & Win Huat Rewards
@@ -148,11 +148,11 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
             
             {/* Major Rewards Display - Resized for 13" laptop */}
             <div className="w-full pt-3 flex justify-center overflow-visible pb-4">
-               <div className="flex flex-row justify-center items-end -space-x-3 md:-space-x-6">
+               <div className="flex flex-row justify-center items-end -space-x-2 md:-space-x-4">
                   {MAJOR_REWARDS.map((reward, idx) => (
                     <div key={idx} className="relative group transition-all duration-300 hover:-translate-y-4 hover:z-50 hover:scale-105 z-10">
-                        {/* Reduced dimensions for 13" laptop */}
-                        <div className="w-28 h-28 md:w-44 md:h-44 lg:w-56 lg:h-56 drop-shadow-[0_15px_15px_rgba(0,0,0,0.7)] filter brightness-110">
+                        {/* Increased dimensions slightly */}
+                        <div className="w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 drop-shadow-[0_15px_15px_rgba(0,0,0,0.7)] filter brightness-110">
                             <img src={reward.img} alt={reward.label} className="w-full h-full object-contain" />
                         </div>
                         {/* Glow effect on hover */}
