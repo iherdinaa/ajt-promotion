@@ -374,6 +374,27 @@ const GamePage: React.FC<GamePageProps> = ({ currentSpin, onComplete }) => {
         dx *= ratio;
         dy *= ratio;
     }
+    
+    // Ensure tangerine stays within screen bounds
+    if (tangerineRef.current) {
+        const rect = tangerineRef.current.getBoundingClientRect();
+        const parentRect = tangerineRef.current.parentElement?.getBoundingClientRect();
+        
+        if (parentRect) {
+            // Calculate the tangerine's would-be position
+            const newLeft = rect.left + dx;
+            const newTop = rect.top + dy;
+            const newRight = newLeft + rect.width;
+            const newBottom = newTop + rect.height;
+            
+            // Constrain to screen bounds
+            if (newLeft < 0) dx = -rect.left;
+            if (newTop < 0) dy = -rect.top;
+            if (newRight > window.innerWidth) dx = window.innerWidth - rect.right;
+            if (newBottom > window.innerHeight) dy = window.innerHeight - rect.bottom;
+        }
+    }
+    
     dragCurrent.current = { x: dx, y: dy };
 
     // Move Tangerine Visually - DIRECT DOM UPDATE
@@ -730,44 +751,32 @@ const GamePage: React.FC<GamePageProps> = ({ currentSpin, onComplete }) => {
         {/* --- HOW TO PLAY TUTORIAL OVERLAY --- */}
         {showTutorial && (
             <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-in fade-in">
-                <div className="bg-white p-6 md:p-8 rounded-[2rem] max-w-md w-full mx-4 text-center border-4 border-yellow-500 shadow-2xl relative overflow-hidden">
+                <div className="bg-white p-6 md:p-8 rounded-[2rem] max-w-lg w-full mx-4 text-center border-4 border-yellow-500 shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-4 bg-red-600"></div>
                     
-                    <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-6xl shadow-inner">
-                        🍊
+                    <h2 className="text-3xl md:text-4xl font-black text-red-700 uppercase italic mb-4">How to Play</h2>
+                    
+                    {/* GIF Demo */}
+                    <div className="w-full aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4 shadow-inner">
+                        <img 
+                            src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTU2cnhpazh1dDF4cWd3NzJmOWFoNHJwNHE1MGpnZXJjbHlocGY5aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sxe5qMdvJqvYYH6QFp/giphy.gif" 
+                            alt="How to play demo"
+                            className="w-full h-full object-cover"
+                        />
                     </div>
                     
-                    <h2 className="text-3xl font-black text-red-700 uppercase italic mb-2">How to Play</h2>
-                    
-                    <div className="space-y-4 my-6 text-left">
-                        <div className="flex items-center gap-4 bg-orange-50 p-3 rounded-xl border border-orange-100">
-                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-2xl border border-gray-100">👆</div>
-                            <div className="flex-1">
-                                <p className="font-bold text-gray-800">Drag & Pull Back</p>
-                                <p className="text-xs text-gray-500">Pull the tangerine backwards.</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4 bg-orange-50 p-3 rounded-xl border border-orange-100">
-                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-2xl border border-gray-100">🚀</div>
-                            <div className="flex-1">
-                                <p className="font-bold text-gray-800">Release to Launch</p>
-                                <p className="text-xs text-gray-500">Aim for the Prosperity River!</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4 bg-blue-50 p-3 rounded-xl border border-blue-100">
-                            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-2xl border border-gray-100">🌊</div>
-                            <div className="flex-1">
-                                <p className="font-bold text-blue-800">Target: The River</p>
-                                <p className="text-xs text-blue-600 font-bold">Sink it into the water at {RIVER_START_M}m+!</p>
-                            </div>
-                        </div>
+                    {/* Instructions */}
+                    <div className="bg-orange-50 p-4 rounded-xl border-2 border-orange-200 mb-6">
+                        <p className="text-base md:text-lg font-bold text-gray-800 leading-relaxed">
+                            Drag & pull back the tangerine. Release to launch. <span className="text-blue-600 font-black">Target: Aim at the river!</span>
+                        </p>
                     </div>
 
                     <button 
                         onClick={() => setShowTutorial(false)}
                         className="w-full bg-red-600 hover:bg-red-700 text-white font-black text-xl py-4 rounded-xl shadow-lg transition-all uppercase tracking-widest active:scale-95"
                     >
-                        START PLAYING
+                        Start Playing
                     </button>
                 </div>
             </div>
