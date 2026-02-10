@@ -28,9 +28,20 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
       const storedData = localStorage.getItem('tng_qr_user');
       if (storedData) {
         try {
-          const { email, phone } = JSON.parse(storedData);
-          // If same email AND same phone, TnG is already opened
-          return email === userData.email && phone === (userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone);
+          const { email, phone, date } = JSON.parse(storedData);
+          const currentPhone = userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone;
+          
+          // Check if same user (email OR phone match)
+          if (email === userData.email || phone === currentPhone) {
+            // Check if it's the same day
+            const storedDate = new Date(date);
+            const today = new Date();
+            const isSameDay = storedDate.toDateString() === today.toDateString();
+            
+            if (isSameDay) {
+              return true; // Already claimed today
+            }
+          }
         } catch (e) {
           return false;
         }
@@ -201,9 +212,14 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                                 className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-2 sm:mb-3 rounded-xl sm:rounded-2xl shadow-sm grayscale"
                                 loading="lazy"
                             />
-                            <span className="text-xs sm:text-sm font-black text-gray-500 text-center leading-tight bg-gray-300/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
-                                QR Opened
-                            </span>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs sm:text-sm font-black text-gray-500 text-center leading-tight bg-gray-300/50 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full">
+                                  You Opened QR Code
+                              </span>
+                              <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 text-center leading-tight">
+                                  Come back tomorrow
+                              </span>
+                            </div>
                           </>
                         ) : isTngLoading ? (
                           <>
@@ -537,11 +553,12 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
               <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-[320px] sm:max-w-md md:max-w-lg w-full text-center relative border-[4px] sm:border-[6px] border-blue-500 shadow-2xl">
                   <button 
                     onClick={() => {
-                      if (isTngExpired && typeof window !== 'undefined' && userData) {
+                      if (typeof window !== 'undefined' && userData) {
                         const phone = userData.countryCode.match(/\+\d+/)?.[0] + userData.phone || userData.phone;
                         localStorage.setItem('tng_qr_user', JSON.stringify({ 
                           email: userData.email, 
-                          phone: phone 
+                          phone: phone,
+                          date: new Date().toISOString()
                         }));
                         setIsTngOpened(true);
                       }
@@ -562,8 +579,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                     <>
                       <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 border-2 border-blue-100">
                           <img 
-                            src="https://files.ajt.my/images/marketing-campaign/image-fbd568f4-3c3e-4671-8df4-335079ea48a9.jpg
-                            " 
+                            src="https://files.ajt.my/images/marketing-campaign/image-fbd568f4-3c3e-4671-8df4-335079ea48a9.jpg" 
                             alt="TnG QR" 
                             className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
                           />
