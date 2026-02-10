@@ -509,13 +509,13 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
 
                  <div className="w-full max-w-md space-y-2 sm:space-y-3 md:space-y-4 px-2">
                      <a 
-                        href="https://www.ajobthing.com/register?redirect=/campaign/rewards" 
+                        href="https://www.ajobthing.com/register" 
                         target="_blank" 
                         rel="noreferrer"
                         onClick={async (e) => {
                           e.preventDefault();
                           await onRegisterClick();
-                          window.open('https://www.ajobthing.com/register?redirect=/campaign/rewards', '_blank');
+                          window.open('https://www.ajobthing.com/register', '_blank');
                         }}
                         className="block w-full bg-red-600 text-white font-black text-sm sm:text-lg md:text-xl py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-wide sm:tracking-widest hover:-translate-y-1 text-center"
                      >
