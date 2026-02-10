@@ -288,7 +288,7 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                 
                 <div className="flex flex-col gap-1 sm:gap-2 text-center">
                     <p className="font-bold text-gray-800 text-xs sm:text-sm">
-                        Voucher valid until 18 February 2026
+                        Voucher valid until 20 February 2026
                     </p>
                     <p className="text-[10px] sm:text-xs text-gray-600 font-medium leading-relaxed">
                         If you're hiring, our Hiring Support will guide you to use this voucher. Please be ready to be Called or Whatsapp.
