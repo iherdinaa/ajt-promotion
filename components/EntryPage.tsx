@@ -131,7 +131,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
           <img 
             src={IMAGES.campaignHeader} 
             alt="A HUAT THING" 
-            className="w-full max-w-[180px] md:max-w-[260px] lg:max-w-[340px] h-auto drop-shadow-2xl filter brightness-110"
+            className="w-full max-w-[220px] md:max-w-[320px] lg:max-w-[420px] h-auto drop-shadow-2xl filter brightness-110"
           />
           
           <div className="max-w-xl w-full flex flex-col items-center space-y-1">

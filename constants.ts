@@ -38,8 +38,8 @@ export const PRIZES: Prize[] = [];
 
 export const IMAGES = {
   logo: 'https://s3-ap-southeast-1.amazonaws.com/ricebowl/images/marketing-campaign/image-9520d447-0168-412d-9cd5-d083a3ab8884.png',
-  campaignHeader: 'https://files.ajt.my/images/marketing-campaign/image-9a88ccbd-3a44-48c0-abee-6b41a12e9067.png',
-  background: 'https://files.ajt.my/images/marketing-campaign/image-fd4b4b3b-6604-4f3a-9832-3fd73ce3b450.jpg',
+  campaignHeader: 'https://files.ajt.my/images/marketing-campaign/image-88724c90-61fb-40dc-b7ac-ead0397c709c.png',
+  background: 'https://files.ajt.my/images/marketing-campaign/image-56f8263d-67c0-4211-bddf-6b3bc1187016.jpg',
   angpaoStatic: 'https://s3-ap-southeast-1.amazonaws.com/ricebowl/images/marketing-campaign/image-0a146e29-7988-4670-a2d9-36a512726487.png',
   fallingCoin: 'https://static.vecteezy.com/system/resources/previews/017/420/786/non_2x/3d-chinese-new-year-coin-illustration-free-png.png',
   fallingSycee: 'https://png.pngtree.com/png-vector/20251210/ourmid/pngtree-golden-sycee-png-image_18129321.webp',
