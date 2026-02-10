@@ -559,13 +559,13 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                   <h3 className="text-lg sm:text-2xl font-black text-blue-600 uppercase mb-3 sm:mb-6 tracking-tight">Your TnG QR Scan</h3>
                   
                   {!isTngExpired ? (
-  <>
-  <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 border-2 border-blue-100">
-  <img
-> src="https://files.ajt.my/images/marketing-campaign/image-fbd568f4-3c3e-4671-8df4-335079ea48a9.jpg"
-  alt="TnG QR"
-  className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
-  />
+                    <>
+                      <div className="bg-blue-50 p-3 sm:p-6 rounded-xl sm:rounded-2xl mb-3 sm:mb-4 border-2 border-blue-100">
+                          <img 
+                            src="https://files.ajt.my/images/marketing-campaign/image-ffba1e6c-dffa-4b83-bf06-20b8d303812b.jpg" 
+                            alt="TnG QR" 
+                            className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 mx-auto object-contain mb-2 sm:mb-4"
+                          />
                       </div>
                       
                       <div className="bg-red-50 border-2 border-red-200 rounded-lg sm:rounded-xl p-2 sm:p-3 mb-2 sm:mb-3">

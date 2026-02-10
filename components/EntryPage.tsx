@@ -93,10 +93,10 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
       {/* Live Company Notification - Centered, aligned with logo */}
       {notification && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white px-5 py-2.5 rounded-full shadow-2xl border-2 border-red-300 flex items-center gap-2 text-xs md:text-sm font-bold">
+          <div className="bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 text-white px-5 py-2.5 rounded-full shadow-2xl border-2 border-orange-300 flex items-center gap-2 text-xs md:text-sm font-bold">
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
             <span className="font-black">{notification.name}</span>
-            <span className="opacity-95 font-extrabold">got {notification.distance}! 🍊</span>
+            <span className="opacity-95 font-extrabold">got {notification.distance}!</span>
           </div>
         </div>
       )}
@@ -148,11 +148,11 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
             
             {/* Major Rewards Display - Resized for 13" laptop */}
             <div className="w-full pt-3 flex justify-center overflow-visible pb-4">
-               <div className="flex flex-row justify-center items-end -space-x-2 md:-space-x-4">
+               <div className="flex flex-row justify-center items-end -space-x-3 md:-space-x-6">
                   {MAJOR_REWARDS.map((reward, idx) => (
                     <div key={idx} className="relative group transition-all duration-300 hover:-translate-y-4 hover:z-50 hover:scale-105 z-10">
-                        {/* Increased dimensions slightly */}
-                        <div className="w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 drop-shadow-[0_15px_15px_rgba(0,0,0,0.7)] filter brightness-110">
+                        {/* Reduced dimensions for 13" laptop */}
+                        <div className="w-28 h-28 md:w-44 md:h-44 lg:w-56 lg:h-56 drop-shadow-[0_15px_15px_rgba(0,0,0,0.7)] filter brightness-110">
                             <img src={reward.img} alt={reward.label} className="w-full h-full object-contain" />
                         </div>
                         {/* Glow effect on hover */}
@@ -252,7 +252,7 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
                  </>
                ) : (
                  <>
-                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-300 via-red-200 to-red-300">THROW NOW</span> <span className="animate-bounce">🍊</span>
+                   THROW NOW <span className="animate-bounce">🍊</span>
                  </>
                )}
             </button>
