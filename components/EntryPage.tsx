@@ -131,14 +131,14 @@ const EntryPage: React.FC<EntryPageProps> = ({ onStart }) => {
           <img 
             src={IMAGES.campaignHeader} 
             alt="A HUAT THING" 
-            className="w-full max-w-[220px] md:max-w-[320px] lg:max-w-[420px] h-auto drop-shadow-2xl filter brightness-110"
+            className="w-full max-w-[260px] md:max-w-[360px] lg:max-w-[460px] h-auto drop-shadow-2xl filter brightness-110"
           />
           
           <div className="max-w-xl w-full flex flex-col items-center space-y-1">
             {/* Copy */}
             <div className="relative p-1 mx-auto">
                 <div className="absolute inset-0 blur-xl bg-black/20 rounded-full opacity-40 transform scale-x-125"></div>
-                <h2 className="relative text-2xl md:text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-red-400 via-red-300 to-red-500 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] whitespace-nowrap md:whitespace-normal">
+                <h2 className="relative text-2xl md:text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] whitespace-nowrap md:whitespace-normal">
                     Throw Tangerine <br/>
                     <span className="text-xl md:text-3xl lg:text-4xl text-white opacity-95 block mt-1 font-bold tracking-tight text-shadow-md">
                         & Win Huat Rewards
