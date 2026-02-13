@@ -265,6 +265,8 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
 
             {/* Additional Text Info */}
             <div className="space-y-2 sm:space-y-3 mb-2 sm:mb-3 text-xs sm:text-sm w-full bg-red-50 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl border-2 border-red-100 shadow-inner">
+                {showLunch && (
+                    <>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
                             <p className="font-bold text-gray-800 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                                 <i className="fa-solid fa-star text-yellow-500 text-[10px] sm:text-sm"></i>
