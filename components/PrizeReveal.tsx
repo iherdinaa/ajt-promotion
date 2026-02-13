@@ -286,10 +286,34 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                     </>
                 )}
                 
-                <div className="flex flex-col gap-1 sm:gap-2 text-center">
+                <div className="flex flex-col gap-2 sm:gap-3 text-center">
                     <p className="font-bold text-gray-800 text-xs sm:text-sm">
                         Voucher valid until 20 February 2026
                     </p>
+                    
+                    {/* Coming Soon Section - More Prominent */}
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg animate-pulse hover:animate-none transition-all">
+                        <div className="flex flex-col items-center gap-2 sm:gap-3">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 text-center">
+                                <span className="text-sm sm:text-base md:text-lg font-black text-red-600 uppercase tracking-wide bg-yellow-100 px-3 py-1 rounded-full border-2 border-red-600 shadow-sm">
+                                    🎉 Coming Soon 🎉
+                                </span>
+                            </div>
+                            <p className="text-xs sm:text-sm md:text-base font-bold text-gray-900 leading-tight">
+                                Scan More <span className="text-red-600 font-black">ANGPAU</span> for <span className="text-red-600 font-black">100 people EVERYDAY</span> on <span className="font-black">16-20 Feb 2026</span>
+                            </p>
+                            <a 
+                                href="https://www.whatsapp.com/channel/0029VadYIsPB4hdYGIn57X2H" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-black text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg transform hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border-2 border-green-600"
+                            >
+                                <i className="fa-brands fa-whatsapp text-lg sm:text-xl"></i>
+                                Join WhatsApp Channel Now
+                            </a>
+                        </div>
+                    </div>
+                    
                     <p className="text-[10px] sm:text-xs text-gray-600 font-medium leading-relaxed">
                         If you're hiring, our Hiring Support will guide you to use this voucher. Please be ready to be Called or Whatsapp.
                     </p>
