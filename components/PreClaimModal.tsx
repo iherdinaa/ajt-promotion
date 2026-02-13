@@ -14,7 +14,11 @@ const PreClaimModal: React.FC<PreClaimModalProps> = ({ onSubmit }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isComplete = formData.resignationFrequency && formData.hiringPlan && formData.headcount;
+  // Check if user selected "No, I'm not hiring"
+  const isNotHiring = formData.hiringPlan === "No, I'm not hiring";
+  
+  // If not hiring, question 3 is not required
+  const isComplete = formData.resignationFrequency && formData.hiringPlan && (isNotHiring || formData.headcount);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-red-950/95">
@@ -95,10 +99,18 @@ const PreClaimModal: React.FC<PreClaimModalProps> = ({ onSubmit }) => {
           </div>
 
           {/* Question 3 */}
-          <div className="space-y-2 sm:space-y-3 md:space-y-4 bg-yellow-50/50 p-2 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl border border-yellow-100">
-            <label className="text-xs sm:text-sm font-black text-red-700 uppercase tracking-wide sm:tracking-widest flex flex-col gap-1 sm:gap-2 min-h-[2.5rem] sm:min-h-[3rem] md:min-h-[3.5rem]">
+          <div className={`space-y-2 sm:space-y-3 md:space-y-4 p-2 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl border transition-all ${
+            isNotHiring 
+              ? 'bg-gray-100/50 border-gray-300 opacity-60' 
+              : 'bg-yellow-50/50 border-yellow-100'
+          }`}>
+            <label className={`text-xs sm:text-sm font-black uppercase tracking-wide sm:tracking-widest flex flex-col gap-1 sm:gap-2 min-h-[2.5rem] sm:min-h-[3rem] md:min-h-[3.5rem] ${
+              isNotHiring ? 'text-gray-500' : 'text-red-700'
+            }`}>
                 <div className="flex items-start gap-1.5 sm:gap-2">
-                    <span className="bg-red-700 text-white rounded-full w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 flex items-center justify-center text-[10px] sm:text-xs mt-0.5">3</span>
+                    <span className={`rounded-full w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 flex items-center justify-center text-[10px] sm:text-xs mt-0.5 ${
+                      isNotHiring ? 'bg-gray-400 text-white' : 'bg-red-700 text-white'
+                    }`}>3</span>
                     <span className="leading-tight">How many headcounts do you plan to hire?</span>
                 </div>
             </label>
@@ -113,11 +125,14 @@ const PreClaimModal: React.FC<PreClaimModalProps> = ({ onSubmit }) => {
                   <button
                     key={opt}
                     type="button"
-                    onClick={() => setFormData({...formData, headcount: opt})}
+                    onClick={() => !isNotHiring && setFormData({...formData, headcount: opt})}
+                    disabled={isNotHiring}
                     className={`text-xs sm:text-sm px-2.5 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl border-2 font-bold transition-all text-left shadow-sm
-                      ${formData.headcount === opt 
-                        ? 'border-yellow-600 bg-yellow-100 text-yellow-900 scale-[1.02] ring-2 ring-yellow-200' 
-                        : 'border-gray-200 text-gray-700 hover:border-yellow-300 bg-white'}
+                      ${isNotHiring
+                        ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                        : formData.headcount === opt 
+                          ? 'border-yellow-600 bg-yellow-100 text-yellow-900 scale-[1.02] ring-2 ring-yellow-200' 
+                          : 'border-gray-200 text-gray-700 hover:border-yellow-300 bg-white'}
                     `}
                   >
                     {opt}
