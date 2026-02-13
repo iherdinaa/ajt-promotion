@@ -57,14 +57,14 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
   const endCampaign = new Date('2026-02-18T23:59:59');
   const showStandardPrizes = today <= endCampaign;
   
-  // TnG: 4-12 Feb 2026 AND 16-18 Feb 2026
+  // TnG: 4-12 Feb 2026 AND 13-18 Feb 2026
   const tngRange1 = today >= new Date('2026-02-04') && today <= new Date('2026-02-12T23:59:59');
-  const tngRange2 = today >= new Date('2026-02-16') && today <= new Date('2026-02-18T23:59:59');
+  const tngRange2 = today >= new Date('2026-02-13') && today <= new Date('2026-02-18T23:59:59');
   const showTnG = tngRange1 || tngRange2;
 
-  // Lunch: 4-9 Feb 2026 OR 13 Feb 2026
+  // Lunch: 4-9 Feb 2026 OR 12 Feb 2026
   const lunchRange1 = today >= new Date('2026-02-04') && today <= new Date('2026-02-09T23:59:59');
-  const lunchDay2 = today.toDateString() === new Date('2026-02-13').toDateString();
+  const lunchDay2 = today.toDateString() === new Date('2026-02-12').toDateString();
   const showLunch = lunchRange1 || lunchDay2;
 
   // Referral Form State
@@ -270,10 +270,10 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
                             <p className="font-bold text-gray-800 flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
                                 <i className="fa-solid fa-star text-yellow-500 text-[10px] sm:text-sm"></i>
-                                <span>Chance to win <span className="text-red-600 font-black">Free Lunch Treat</span> from AJobThing!</span>
+                                <span>Coming Soon: <span className="text-red-600 font-black">MORE ANGPAO for 200 People</span> from AJobThing!</span>
                             </p>
                             <a 
-                                href="https://epca.in/ajt-wa-channel" 
+                                href="https://www.whatsapp.com/channel/0029VadYIsPB4hdYGIn57X2H" 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="font-bold text-green-600 hover:text-green-700 underline text-xs sm:text-sm whitespace-nowrap flex items-center gap-1"
