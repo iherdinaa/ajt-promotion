@@ -290,6 +290,21 @@ const PrizeReveal: React.FC<PrizeRevealProps> = ({ quizData, userData, onReferra
                     <p className="font-bold text-gray-800 text-xs sm:text-sm">
                         Voucher valid until 20 February 2026
                     </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 my-2">
+                        <p className="text-[10px] sm:text-xs font-bold text-gray-800 flex items-center gap-1 sm:gap-2">
+                            <span className="font-black">Coming Soon:</span>
+                            <span>Scan More ANGPAU for 100 people EVERYDAY on 16-20 Feb 2026</span>
+                        </p>
+                        <a 
+                            href="https://www.whatsapp.com/channel/0029VadYIsPB4hdYGIn57X2H" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="font-bold text-green-600 hover:text-green-700 underline text-[10px] sm:text-xs whitespace-nowrap flex items-center gap-1"
+                        >
+                            <i className="fa-brands fa-whatsapp text-xs sm:text-sm"></i>
+                            Join WhatsApp Channel
+                        </a>
+                    </div>
                     <p className="text-[10px] sm:text-xs text-gray-600 font-medium leading-relaxed">
                         If you're hiring, our Hiring Support will guide you to use this voucher. Please be ready to be Called or Whatsapp.
                     </p>
